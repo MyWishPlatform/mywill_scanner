@@ -5,13 +5,15 @@ from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_output import WrapperOutput
 
+from settings.settings_local import NETWORKS
+
 
 class EthNetwork(WrapperNetwork):
 
     def __init__(self, type):
-        type = 'https://ropsten-rpc.linkpool.io/'
         super().__init__(type)
-        self.w3_interface = Web3(Web3.HTTPProvider(type))
+        url = NETWORKS[type]['url']
+        self.w3_interface = Web3(Web3.HTTPProvider(url))
 
     def get_last_block(self):
         return self.w3_interface.eth.blockNumber
