@@ -9,7 +9,7 @@ from networks import EthMaker
 from settings.settings_local import NETWORKS
 
 networks = {
-    'ETHERIUM_MAINNET': EthMaker
+    'ETHEREUM_MAINNET': EthMaker
 }
 
 

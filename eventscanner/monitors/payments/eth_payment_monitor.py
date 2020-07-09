@@ -6,11 +6,11 @@ from logger import logger
 
 class EthPaymentMonitor:
 
-    network_types = ['ETHERIUM_MAINNET']
+    network_types = ['ETHEREUM_MAINNET']
     event_type = 'payment'
 
     @classmethod
-    def on_new_block_ewent(cls, block_event: BlockEvent):
+    def on_new_block_event(cls, block_event: BlockEvent):
         if block_event.network.type not in cls.network_types:
             return
 

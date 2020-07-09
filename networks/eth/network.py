@@ -4,6 +4,7 @@ from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_output import WrapperOutput
+from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
 
 from settings.settings_local import NETWORKS
 
@@ -30,7 +31,6 @@ class EthNetwork(WrapperNetwork):
 
     @staticmethod
     def _build_transaction(tx):
-        # 'creates' is None when tx dont create any contract
         output = WrapperOutput(
             tx['hash'],
             0,
@@ -39,6 +39,7 @@ class EthNetwork(WrapperNetwork):
             tx['input']
         )
 
+        # 'creates' is None when tx dont create any contract
         t = WrapperTransaction(
             tx['hash'].hex(),
             [tx['from']],
@@ -47,3 +48,12 @@ class EthNetwork(WrapperNetwork):
             tx['creates']
         )
         return t
+
+    def get_tx_receipt(self, hash):
+        tx_res = self.w3_interface.eth.getTransactionReceipt(hash)
+        return WrapperTransactionReceipt(
+            tx_res['transactionHash'].hex(),
+            tx_res['contractAddress'],
+            tx_res['logs'],
+            bool(tx_res['status']),
+        )
