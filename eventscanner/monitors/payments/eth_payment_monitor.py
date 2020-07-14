@@ -1,13 +1,15 @@
-from scanner.events.block_event import BlockEvent
-from mywish_models.models import UserSiteBalance, session
 from eventscanner.queue.pika_handler import send_to_backend
 from logger import logger
+from mywish_models.models import UserSiteBalance, session
+from scanner.events.block_event import BlockEvent
+from settings.settings_local import NETWORKS
 
 
 class EthPaymentMonitor:
 
     network_types = ['ETHEREUM_MAINNET']
     event_type = 'payment'
+    queue = NETWORKS[network_types[0]]['queue']
 
     @classmethod
     def on_new_block_event(cls, block_event: BlockEvent):
@@ -41,4 +43,4 @@ class EthPaymentMonitor:
                     'status': 'COMMITTED'
                 }
 
-                send_to_backend(cls.event_type, 'notification-ducatusx-mainnet', message)
+                send_to_backend(cls.event_type, cls.queue, message)
