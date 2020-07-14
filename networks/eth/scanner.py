@@ -1,11 +1,9 @@
 import collections
 
-from eventscanner.queue.subscribers import pub
-
-from scanner.services.scanner_polling import ScannerPolling
 from blockchain_common.wrapper_block import WrapperBlock
+from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
-from logger import logger
+from scanner.services.scanner_polling import ScannerPolling
 
 
 class EthScanner(ScannerPolling):
@@ -31,8 +29,7 @@ class EthScanner(ScannerPolling):
         if from_address:
             addresses[from_address.lower()].append(tx)
         else:
-            logger.warn(
-                '{}: Empty from field for transaction {}. Skip it.'.format(self.network.type, tx.tx_hash))
+            print('{}: Empty from field for transaction {}. Skip it.'.format(self.network.type, tx.tx_hash))
 
     def _check_tx_to(self, tx, address):
         to_address = tx.outputs[0]
@@ -52,8 +49,7 @@ class EthScanner(ScannerPolling):
                 tx.creates = contract_address
                 address[contract_address.lower()].append(tx)
             except Exception:
-                logger.exception('{}: Error on getting transaction {} receipt.'.format(self.network.type,
-                                                                                       tx.tx_hash))
-                logger.warn(
-                    '{}: Empty to and creates field for transaction {}. Skip it.'.format(self.network.type,
-                                                                                         tx.tx_hash))
+                print('{}: Error on getting transaction {} receipt.'.format(self.network.type,
+                                                                            tx.tx_hash))
+                print('{}: Empty to and creates field for transaction {}. Skip it.'.format(self.network.type,
+                                                                                           tx.tx_hash))

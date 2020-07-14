@@ -1,5 +1,4 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from logger import logger
 from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
@@ -22,7 +21,7 @@ class EthPaymentMonitor:
             transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
 
             if not transactions:
-                logger.error('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
+                print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
                     block_event.network.type, user_site_balance, block_event.block.number))
 
             for transaction in transactions:
