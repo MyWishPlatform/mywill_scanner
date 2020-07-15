@@ -32,7 +32,7 @@ class TronNetwork(WrapperNetwork):
         contract = contract_wrapper['parameter']['value']
         owner_address = contract['owner_address']
         inputs = [owner_address]
-        outputs = cls._build_output(tx)
+        outputs = [cls._build_output(tx)]
         contract_creation = contract_wrapper['type'] == "CreateSmartContract"
         contracts = [tx.get('contract_address')] or []
 
@@ -69,7 +69,7 @@ class TronNetwork(WrapperNetwork):
 
 
 class TronWrapperTransaction(WrapperTransaction):
-    def __init__(self, tx_hash, inputs, outputs: 'TronWrapperOutput', contract_creation, contracts, status):
+    def __init__(self, tx_hash, inputs, outputs: ['TronWrapperOutput'], contract_creation, contracts, status):
         creates = contracts[0] if contracts else None
         super().__init__(tx_hash, inputs, outputs, contract_creation, creates)
         self.contracts = contracts
