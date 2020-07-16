@@ -30,6 +30,7 @@ class TronPaymentMonitor:
                     print('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type),
                           flush=True)
                     continue
+
                 amount = tx.outputs[0].value if usb.tron_address == tx.outputs[0].address else 0
 
                 # fixme In java this checking like get_tx_receipt -> EventByTx,

@@ -2,7 +2,7 @@ from tronapi import Tron
 
 from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_block import WrapperBlock
-from networks.tron.services import TronWrapperOutput, TronWrapperTransaction
+from networks.tron.services import TronWrapperTransaction
 
 
 class TronNetwork(WrapperNetwork):
