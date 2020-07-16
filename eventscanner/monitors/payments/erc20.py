@@ -30,17 +30,15 @@ class ERC20PaymentMonitor:
     @classmethod
     def handle(cls, token_address: str, transactions, network):
         for tx in transactions:
-            if token_address.lower() != tx.outputs[0].address:
+            if token_address.lower() != tx.outputs[0].address.lower():
                 continue
 
-            tx_receipt = network.get_tx_receipt(tx.tx_hash)
-
-            processed_receipt = network.get_processed_tx_receipt(tx_receipt)
+            processed_receipt = network.get_processed_tx_receipt(tx.tx_hash)
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
             user_site_balance = session.query(UserSiteBalance).\
-                filter(UserSiteBalance.eth_address == transfer_to).all()
+                filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
             if not user_site_balance:
                 return
 
