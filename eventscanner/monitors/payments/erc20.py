@@ -43,10 +43,13 @@ class ERC20PaymentMonitor:
                 return
 
             message = {
-                "transaction": tx.tx_hash,
+                "userId": user_site_balance.user_id,
+                "siteId": user_site_balance.subsite_id,
+                "transactionHash": tx.tx_hash,
                 "address": user_site_balance.eth_address,
                 "amount": tokens_amount,
                 "currency": 'SWAP',
+                "status": "COMMITTED",
                 "success": True
             }
 
