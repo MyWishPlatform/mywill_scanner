@@ -3,11 +3,10 @@ from web3 import Web3
 from blockchain_common.eth_tokens import erc20_abi
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
-from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_output import WrapperOutput
+from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
-
-from settings.settings_local import NETWORKS, TOKENS
+from settings.settings_local import NETWORKS, ERC20_TOKENS
 
 
 class EthNetwork(WrapperNetwork):
@@ -17,9 +16,10 @@ class EthNetwork(WrapperNetwork):
         url = NETWORKS[type]['url']
         self.w3_interface = Web3(Web3.HTTPProvider(url))
 
-        self.swap_contract = self.w3_interface.eth.contract(
-            self.w3_interface.toChecksumAddress(TOKENS['SWAP']), abi=erc20_abi
-        )
+        self.erc20_contracts_dict = {t_name: self.w3_interface.eth.contract(
+            self.w3_interface.toChecksumAddress(t_address),
+            abi=erc20_abi
+        ) for t_name, t_address in ERC20_TOKENS.items()}
 
     def get_last_block(self):
         return self.w3_interface.eth.blockNumber
@@ -63,7 +63,7 @@ class EthNetwork(WrapperNetwork):
             bool(tx_res['status']),
         )
 
-    def get_processed_tx_receipt(self, tx_hash):
+    def get_processed_tx_receipt(self, tx_hash, token_name):
         tx_res = self.w3_interface.eth.getTransactionReceipt(tx_hash)
-        processed = self.swap_contract.events.Transfer().processReceipt(tx_res)
+        processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed

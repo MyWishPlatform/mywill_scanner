@@ -1,7 +1,7 @@
 from eventscanner.queue.pika_handler import send_to_backend
 from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
-from settings.settings_local import NETWORKS, TOKENS
+from settings.settings_local import NETWORKS, ERC20_TOKENS
 
 
 class ERC20PaymentMonitor:
@@ -10,11 +10,7 @@ class ERC20PaymentMonitor:
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 
-    tokenAddressSwap = TOKENS['SWAP']
-
-    address_to_currency = [
-        tokenAddressSwap
-    ]
+    tokens = ERC20_TOKENS
 
     @classmethod
     def on_new_block_event(cls, block_event: BlockEvent):
@@ -22,18 +18,18 @@ class ERC20PaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        for token_address in cls.address_to_currency:
+        for token_name, token_address in cls.tokens.items():
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
-                return cls.handle(token_address, transactions, block_event.network)
+                return cls.handle(token_address, token_name, transactions, block_event.network)
 
     @classmethod
-    def handle(cls, token_address: str, transactions, network):
+    def handle(cls, token_address: str, token_name, transactions, network):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
                 continue
 
-            processed_receipt = network.get_processed_tx_receipt(tx.tx_hash)
+            processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
@@ -48,7 +44,7 @@ class ERC20PaymentMonitor:
                 "transactionHash": tx.tx_hash,
                 "address": user_site_balance.eth_address,
                 "amount": tokens_amount,
-                "currency": 'SWAP',
+                "currency": token_name,
                 "status": "COMMITTED",
                 "success": True
             }
