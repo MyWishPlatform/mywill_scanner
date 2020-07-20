@@ -37,7 +37,7 @@ class EthNetwork(WrapperNetwork):
     @staticmethod
     def _build_transaction(tx):
         output = WrapperOutput(
-            tx['hash'],
+            tx['hash'].hex(),
             0,
             tx['to'],
             tx['value'],
