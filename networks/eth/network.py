@@ -44,13 +44,15 @@ class EthNetwork(WrapperNetwork):
             tx['input']
         )
 
+        tx_creates = tx.get('creates', None)
+
         # 'creates' is None when tx dont create any contract
         t = WrapperTransaction(
             tx['hash'].hex(),
             [tx['from']],
             [output],
-            bool(tx['creates']),
-            tx['creates']
+            bool(tx_creates),
+            tx_creates
         )
         return t
 
