@@ -37,20 +37,22 @@ class EthNetwork(WrapperNetwork):
     @staticmethod
     def _build_transaction(tx):
         output = WrapperOutput(
-            tx['hash'],
+            tx['hash'].hex(),
             0,
             tx['to'],
             tx['value'],
             tx['input']
         )
 
+        tx_creates = tx.get('creates', None)
+
         # 'creates' is None when tx dont create any contract
         t = WrapperTransaction(
             tx['hash'].hex(),
             [tx['from']],
             [output],
-            bool(tx['creates']),
-            tx['creates']
+            bool(tx_creates),
+            tx_creates
         )
         return t
 

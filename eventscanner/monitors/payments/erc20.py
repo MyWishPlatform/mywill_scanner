@@ -19,6 +19,7 @@ class ERC20PaymentMonitor:
 
         addresses = block_event.transactions_by_address.keys()
         for token_name, token_address in cls.tokens.items():
+            token_address = token_address.lower()
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
                 return cls.handle(token_address, token_name, transactions, block_event.network)
