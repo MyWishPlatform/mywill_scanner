@@ -5,7 +5,7 @@ from settings.settings_local import NETWORKS
 
 
 class BTCPaymentMonitor:
-    network_types = ['BTC_MAINNET', 'BTC_TESTNET']
+    network_types = ['BTC_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 

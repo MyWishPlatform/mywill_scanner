@@ -1,27 +1,6 @@
-from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
-
-from http.client import RemoteDisconnected
+from bitcoinrpc.authproxy import AuthServiceProxy
 
 from settings.settings_local import NETWORKS, DECIMALS
-
-
-def retry_on_http_disconnection(req):
-    def wrapper(*args, **kwargs):
-        for attempt in range(10):
-            print('attempt', attempt, flush=True)
-            try:
-                return req(*args, **kwargs)
-            except RemoteDisconnected as e:
-                print(e, flush=True)
-                rpc_response = False
-            if not isinstance(rpc_response, bool):
-                print(rpc_response, flush=True)
-                break
-        else:
-            raise Exception(
-                'cannot get unspent with 10 attempts')
-
-    return wrapper
 
 
 class BTCInterfaceException(Exception):
@@ -58,19 +37,3 @@ class BTCInterface:
 
     def dec_to_int(self, value):
         return int(value * self.decimal)
-
-    @retry_on_http_disconnection
-    def node_transfer(self, address, amount):
-        try:
-            value = amount / DECIMALS['DUC']
-            print('try sending {value} DUC to {addr}'.format(value=value, addr=address))
-            self.rpc.walletpassphrase(self.settings['wallet_password'], 30)
-            res = self.rpc.sendtoaddress(address, value)
-            print(res)
-            return res
-        except JSONRPCException as e:
-            err = 'DUCATUS TRANSFER ERROR: transfer for {amount} DUC for {addr} failed' \
-                .format(amount=amount, addr=address)
-            print(err, flush=True)
-            print(e, flush=True)
-            raise BTCInterfaceException(err)
