@@ -41,6 +41,6 @@ class BTCNetwork(WrapperNetwork):
             tx['hash'],
             o['n'],
             o['scriptPubKey']['addresses'],
-            int(o['value']),
+            self.interface.dec_to_int(o['value']),
             None
         ) for o in vout if o['scriptPubKey']['type'] != 'nulldata']

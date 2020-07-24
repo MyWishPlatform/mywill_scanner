@@ -35,6 +35,7 @@ class DucatuscoreInterface:
     def __init__(self, net_type):
 
         self.settings = NETWORKS[net_type]
+        self.decimal = DECIMALS['BTC']
         self.setup_endpoint()
         self.rpc = AuthServiceProxy(self.endpoint)
         self.check_connection()
@@ -54,6 +55,9 @@ class DucatuscoreInterface:
             return True
         else:
             raise Exception('Ducatus node not connected')
+
+    def dec_to_int(self, value):
+        return int(value * self.decimal)
 
     @retry_on_http_disconnection
     def node_transfer(self, address, amount):
