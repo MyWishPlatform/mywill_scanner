@@ -17,7 +17,6 @@ class BTCNetwork(WrapperNetwork):
     def get_block(self, number: int) -> WrapperBlock:
         block_hash = self.interface.rpc.getblockhash(number)
         block = self.interface.rpc.getblock(block_hash, 2)
-        # block['tx'] = [self.interface.rpc.getrawtransaction(t, 1) for t in block['tx']]
 
         transactions = [WrapperTransaction(
             t['txid'],
