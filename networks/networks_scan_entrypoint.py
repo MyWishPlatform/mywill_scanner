@@ -10,7 +10,7 @@ from settings.settings_local import NETWORKS
 
 networks = {
     # 'ETHEREUM_MAINNET': EthMaker,
-    'BTC_TESTNET': BTCMaker
+    'BTC_MAINNET': BTCMaker
 }
 
 
