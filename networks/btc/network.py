@@ -1,4 +1,4 @@
-from blockchain_common.litecoin_rpc import DucatuscoreInterface
+from blockchain_common.btc_rpc import BTCInterface
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_output import WrapperOutput
@@ -9,7 +9,7 @@ class BTCNetwork(WrapperNetwork):
 
     def __init__(self, net_type: str):
         super().__init__(net_type)
-        self.interface = DucatuscoreInterface(net_type)
+        self.interface = BTCInterface(net_type)
 
     def get_last_block(self):
         return self.interface.rpc.getblockcount()

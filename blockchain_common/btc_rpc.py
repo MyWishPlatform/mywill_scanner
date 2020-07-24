@@ -24,11 +24,11 @@ def retry_on_http_disconnection(req):
     return wrapper
 
 
-class DucatuscoreInterfaceException(Exception):
+class BTCInterfaceException(Exception):
     pass
 
 
-class DucatuscoreInterface:
+class BTCInterface:
     endpoint = None
     settings = None
 
@@ -73,4 +73,4 @@ class DucatuscoreInterface:
                 .format(amount=amount, addr=address)
             print(err, flush=True)
             print(e, flush=True)
-            raise DucatuscoreInterfaceException(err)
+            raise BTCInterfaceException(err)
