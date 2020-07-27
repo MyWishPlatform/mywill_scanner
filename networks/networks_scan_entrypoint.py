@@ -5,11 +5,12 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from networks import EthMaker
+from networks import EthMaker, TronMaker
 from settings.settings_local import NETWORKS
 
 networks = {
-    'ETHEREUM_MAINNET': EthMaker
+    'ETHEREUM_MAINNET': EthMaker,
+    'TRON_MAINNET': TronMaker
 }
 
 
