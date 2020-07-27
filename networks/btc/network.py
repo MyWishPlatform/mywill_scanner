@@ -7,6 +7,8 @@ from blockchain_common.wrapper_transaction import WrapperTransaction
 
 class BTCNetwork(WrapperNetwork):
 
+    ignore_output_types = ['nulldata', 'nonstandard']
+
     def __init__(self, net_type: str):
         super().__init__(net_type)
         self.interface = BTCInterface(net_type)
@@ -42,4 +44,4 @@ class BTCNetwork(WrapperNetwork):
             o['scriptPubKey']['addresses'],
             self.interface.dec_to_int(o['value']),
             None
-        ) for o in vout if o['scriptPubKey']['type'] != 'nulldata']
+        ) for o in vout if o['scriptPubKey']['type'] not in self.ignore_output_types]
