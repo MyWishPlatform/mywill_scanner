@@ -25,4 +25,4 @@ class TronScanner(ScannerPolling):
                 address_transactions[output.address].append(tx)
 
         block_event = BlockEvent(self.network, block, address_transactions)
-        pub.sendMessage(self.network.type, block_event)
+        pub.sendMessage(self.network.type, block_event=block_event)
