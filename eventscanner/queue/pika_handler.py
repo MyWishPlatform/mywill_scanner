@@ -7,13 +7,13 @@ def send_to_backend(type, queue, message):
         'localhost',
         5672,
         'mywill',
-        pika.PlainCredentials('mywill', 'mywill'),
+        pika.PlainCredentials('java', 'java'),
     ))
     channel = connection.channel()
     channel.queue_declare(queue=queue, durable=True, auto_delete=False,
                           exclusive=False)
     channel.basic_publish(
-        exchange=queue,
+        exchange='',
         routing_key=queue,
         body=json.dumps(message),
         properties=pika.BasicProperties(type=type),

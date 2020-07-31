@@ -1,12 +1,12 @@
 from web3 import Web3
 
+from blockchain_common.eth_tokens import erc20_abi
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
-from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_output import WrapperOutput
+from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
-
-from settings.settings_local import NETWORKS
+from settings.settings_local import NETWORKS, ERC20_TOKENS
 
 
 class EthNetwork(WrapperNetwork):
@@ -15,6 +15,11 @@ class EthNetwork(WrapperNetwork):
         super().__init__(type)
         url = NETWORKS[type]['url']
         self.w3_interface = Web3(Web3.HTTPProvider(url))
+
+        self.erc20_contracts_dict = {t_name: self.w3_interface.eth.contract(
+            self.w3_interface.toChecksumAddress(t_address),
+            abi=erc20_abi
+        ) for t_name, t_address in ERC20_TOKENS.items()}
 
     def get_last_block(self):
         return self.w3_interface.eth.blockNumber
@@ -32,20 +37,22 @@ class EthNetwork(WrapperNetwork):
     @staticmethod
     def _build_transaction(tx):
         output = WrapperOutput(
-            tx['hash'],
+            tx['hash'].hex(),
             0,
             tx['to'],
             tx['value'],
             tx['input']
         )
 
+        tx_creates = tx.get('creates', None)
+
         # 'creates' is None when tx dont create any contract
         t = WrapperTransaction(
             tx['hash'].hex(),
             [tx['from']],
             [output],
-            bool(tx['creates']),
-            tx['creates']
+            bool(tx_creates),
+            tx_creates
         )
         return t
 
@@ -57,3 +64,8 @@ class EthNetwork(WrapperNetwork):
             tx_res['logs'],
             bool(tx_res['status']),
         )
+
+    def get_processed_tx_receipt(self, tx_hash, token_name):
+        tx_res = self.w3_interface.eth.getTransactionReceipt(tx_hash)
+        processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
+        return processed
