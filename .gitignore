@@ -124,3 +124,9 @@ gunicorn.conf.py
 db.sqlite3
 .vscode/
 settings/
+
+
+# ignore local configs
+/*config*.yaml
+# except example
+!config.example.yaml

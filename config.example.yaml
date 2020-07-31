@@ -1,0 +1,18 @@
+networks:
+  NETWORK_NAME:
+    url: 'https://127.0.0.1:5000'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: 'name'
+
+erc20_tokens:
+  TTT: '0x0123456789abcdefABCDEF000000000000000000'
+
+
+decimal_degree:
+  BTC: 8
+
+db:
+  url: 'postgresql://user:pass@host:port/db_name'
+
+debug: true
