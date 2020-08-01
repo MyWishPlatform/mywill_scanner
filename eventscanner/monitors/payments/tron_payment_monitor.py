@@ -33,9 +33,6 @@ class TronPaymentMonitor:
 
                 amount = tx.outputs[0].value if usb.tron_address == tx.outputs[0].address else 0
 
-                # fixme In java this checking like get_tx_receipt -> EventByTx,
-                #  but it contains same with tx field `status`,
-                #  so idk did i need copy event_check from java?
                 success = tx.status == 'SUCCESS'
                 message = {
                     'userId': usb.user_id,
