@@ -38,11 +38,14 @@ class TronPaymentMonitor:
                 #  so idk did i need copy event_check from java?
                 success = tx.status == 'SUCCESS'
                 message = {
+                    'userId': usb.user_id,
                     "transactionHash": tx.tx_hash,
                     "address": usb.tron_address,
-                    "amount": amount,
                     "currency": "TRX",
+                    "amount": amount,
+                    'siteId': usb.subsite_id,
                     "success": success,
+                    'status': 'COMMITTED'
                 }
 
                 send_to_backend(cls.event_type, cls.queue, message)
