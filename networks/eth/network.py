@@ -1,3 +1,5 @@
+import requests
+from hexbytes import HexBytes
 from web3 import Web3
 
 from blockchain_common.eth_tokens import erc20_abi
@@ -32,12 +34,17 @@ class EthNetwork(WrapperNetwork):
             block['timestamp'],
             [self._build_transaction(t) for t in block['transactions']],
         )
+        block.transactions = block.transactions + self.get_internal_txs(number)
         return block
 
     @staticmethod
     def _build_transaction(tx):
+        tx_hash = tx['hash']
+        if isinstance(tx_hash, HexBytes):
+            tx_hash = tx_hash.hex()
+
         output = WrapperOutput(
-            tx['hash'].hex(),
+            tx_hash,
             0,
             tx['to'],
             tx['value'],
@@ -48,7 +55,7 @@ class EthNetwork(WrapperNetwork):
 
         # 'creates' is None when tx dont create any contract
         t = WrapperTransaction(
-            tx['hash'].hex(),
+            tx_hash,
             [tx['from']],
             [output],
             bool(tx_creates),
@@ -69,3 +76,24 @@ class EthNetwork(WrapperNetwork):
         tx_res = self.w3_interface.eth.getTransactionReceipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
+
+    @staticmethod
+    def get_internal_txs(block_number) -> [WrapperTransaction]:
+        params = {
+            'module': 'account',
+            'action': 'txlistinternal',
+            'startblock': block_number,
+            'endblock': block_number,
+        }
+
+        r = requests.get('https://api.etherscan.io/api', params=params)
+        data = r.json()
+
+        txs = data.get('result')
+
+        answer = []
+        for tx in txs:
+            t = EthNetwork._build_transaction(tx)
+            answer.append(t)
+
+        return answer
