@@ -18,19 +18,19 @@ class EthNetwork(WrapperNetwork):
     def __init__(self, type):
         super().__init__(type)
         url = NETWORKS[type]['url']
-        self.w3_interface = Web3(Web3.HTTPProvider(url))
+        self.web3 = Web3(Web3.HTTPProvider(url))
         self.etherscan = EtherScanAPI()
 
-        self.erc20_contracts_dict = {t_name: self.w3_interface.eth.contract(
-            self.w3_interface.toChecksumAddress(t_address),
+        self.erc20_contracts_dict = {t_name: self.web3.eth.contract(
+            self.web3.toChecksumAddress(t_address),
             abi=erc20_abi
         ) for t_name, t_address in ERC20_TOKENS.items()}
 
     def get_last_block(self):
-        return self.w3_interface.eth.blockNumber
+        return self.web3.eth.blockNumber
 
     def get_block(self, number: int) -> WrapperBlock:
-        block = self.w3_interface.eth.getBlock(number, full_transactions=True)
+        block = self.web3.eth.getBlock(number, full_transactions=True)
         block = WrapperBlock(
             block['hash'].hex(),
             block['number'],
@@ -70,7 +70,7 @@ class EthNetwork(WrapperNetwork):
         return t
 
     def get_tx_receipt(self, hash):
-        tx_res = self.w3_interface.eth.getTransactionReceipt(hash)
+        tx_res = self.web3.eth.getTransactionReceipt(hash)
         return WrapperTransactionReceipt(
             tx_res['transactionHash'].hex(),
             tx_res['contractAddress'],
@@ -79,7 +79,7 @@ class EthNetwork(WrapperNetwork):
         )
 
     def get_processed_tx_receipt(self, tx_hash, token_name):
-        tx_res = self.w3_interface.eth.getTransactionReceipt(tx_hash)
+        tx_res = self.web3.eth.getTransactionReceipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
 
