@@ -1,3 +1,5 @@
+import time
+
 import requests
 from hexbytes import HexBytes
 from web3 import Web3
@@ -17,6 +19,7 @@ class EthNetwork(WrapperNetwork):
         super().__init__(type)
         url = NETWORKS[type]['url']
         self.w3_interface = Web3(Web3.HTTPProvider(url))
+        self.etherscan = EtherScanAPI()
 
         self.erc20_contracts_dict = {t_name: self.w3_interface.eth.contract(
             self.w3_interface.toChecksumAddress(t_address),
@@ -34,7 +37,10 @@ class EthNetwork(WrapperNetwork):
             block['timestamp'],
             [self._build_transaction(t) for t in block['transactions']],
         )
-        block.transactions = block.transactions + self.get_internal_txs(number)
+
+        internal_txs = self.etherscan.get_internal_txs(number)
+        block.transactions = block.transactions + internal_txs
+
         return block
 
     @staticmethod
@@ -77,8 +83,39 @@ class EthNetwork(WrapperNetwork):
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
 
+
+class EtherScanAPI:
+    """
+    Interface for EtherScan API.
+
+    We can't get internal transactions from ETH RPC, cause they aren't actual transactions.
+    But EtherScan allow us to get this info.
+
+    Makes request with considering the limit. Without API key it's only one request per 3 sec.
+    """
+
+    def __init__(self):
+        self.requests_per_second = 0.3
+        self.last_request_time = 0.0
+
+    def get_internal_txs(self, block_number):
+        """
+        Compare API limit with last request time.
+        If requests over limits - wait and try again after.
+        """
+        seconds_for_request = 1 / self.requests_per_second
+        now = time.time()
+        time_diff = now - self.last_request_time
+
+        if time_diff >= seconds_for_request:
+            self.last_request_time = now
+            return self._get_internal_txs(block_number)
+        else:
+            time.sleep(seconds_for_request - time_diff)
+            return self.get_internal_txs(block_number)
+
     @staticmethod
-    def get_internal_txs(block_number) -> [WrapperTransaction]:
+    def _get_internal_txs(block_number):
         params = {
             'module': 'account',
             'action': 'txlistinternal',
