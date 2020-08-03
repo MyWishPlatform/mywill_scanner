@@ -38,8 +38,9 @@ class EthNetwork(WrapperNetwork):
             [self._build_transaction(t) for t in block['transactions']],
         )
 
-        internal_txs = self.etherscan.get_internal_txs(number)
-        block.transactions = block.transactions + internal_txs
+        internal_txs = [self._build_transaction(t)
+                        for t in self.etherscan.get_internal_txs(number)]
+        block.transactions += internal_txs
 
         return block
 
@@ -100,6 +101,8 @@ class EtherScanAPI:
 
     def get_internal_txs(self, block_number):
         """
+        Return internal transactions by block number
+
         Compare API limit with last request time.
         If requests over limits - wait and try again after.
         """
@@ -127,10 +130,4 @@ class EtherScanAPI:
         data = r.json()
 
         txs = data.get('result')
-
-        answer = []
-        for tx in txs:
-            t = EthNetwork._build_transaction(tx)
-            answer.append(t)
-
-        return answer
+        return txs
