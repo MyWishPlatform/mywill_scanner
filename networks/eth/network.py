@@ -185,7 +185,7 @@ class EtherScanAPI:
             txs = data.get('result')
             return txs
         else:
-            raise APILimitError
+            raise APILimitError(data['message'])
 
 
 class APILimitError(Exception):
