@@ -181,10 +181,12 @@ class EtherScanAPI:
         r = requests.get(self.url, headers=self.headers, params=params)
         data = r.json()
 
-        if r.status_code == 200 and data['status'] == 1:
+        if r.status_code == 200 and data['status'] == '1':
             txs = data.get('result')
             return txs
         else:
+            if data['message'] == 'No transactions found':
+                return []
             raise APILimitError(data['message'])
 
 
