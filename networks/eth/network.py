@@ -104,7 +104,7 @@ class EtherScanAPI:
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Geko/20100101 Firefox/69.0'}
 
     def __init__(self, api_key=None, testnet=False):
-        url_prefix = 'api' if testnet else 'api-ropsten'
+        url_prefix = 'api-ropsten' if testnet else 'api'
         self.url = f'https://{url_prefix}.etherscan.io/api'
 
         if self._validate_api_key(api_key):
@@ -167,7 +167,7 @@ class EtherScanAPI:
             'action': 'txlistinternal',
             'startblock': block_number,
             'endblock': block_number,
-            'apikey': self.default_api_key
+            'apikey': self.api_key
         }
 
         r = requests.get(self.url, headers=self.headers, params=params)
