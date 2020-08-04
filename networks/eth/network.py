@@ -21,7 +21,8 @@ class EthNetwork(WrapperNetwork):
         self.web3 = Web3(Web3.HTTPProvider(url))
 
         etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
-        self.etherscan = EtherScanAPI(etherscan_api_key)
+        is_testnet = NETWORKS[type].get('is_testnet')
+        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
 
         self.erc20_contracts_dict = {t_name: self.web3.eth.contract(
             self.web3.toChecksumAddress(t_address),
@@ -99,13 +100,16 @@ class EtherScanAPI:
 
     default_api_key = 'YourApiKeyToken'
 
-    def __init__(self, api_key=None):
+    def __init__(self, api_key=None, testnet=False):
         if self._validate_api_key(api_key):
             self.api_key = api_key
             self.requests_per_second = 5.0
         else:
             self.api_key = self.default_api_key
             self.requests_per_second = 0.3
+
+        url_prefix = 'api' if testnet else 'api-ropsten'
+        self.url = f'https://{url_prefix}.etherscan.io/api'
 
         self.last_request_time = 0.0
 
