@@ -19,7 +19,9 @@ class EthNetwork(WrapperNetwork):
         super().__init__(type)
         url = NETWORKS[type]['url']
         self.web3 = Web3(Web3.HTTPProvider(url))
-        self.etherscan = EtherScanAPI()
+
+        etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
+        self.etherscan = EtherScanAPI(etherscan_api_key)
 
         self.erc20_contracts_dict = {t_name: self.web3.eth.contract(
             self.web3.toChecksumAddress(t_address),
@@ -95,9 +97,43 @@ class EtherScanAPI:
     Makes request with considering the limit. Without API key it's only one request per 3 sec.
     """
 
-    def __init__(self):
-        self.requests_per_second = 0.3
+    default_api_key = 'YourApiKeyToken'
+
+    def __init__(self, api_key=None):
+        if self._validate_api_key(api_key):
+            self.api_key = api_key
+            self.requests_per_second = 5.0
+        else:
+            self.api_key = self.default_api_key
+            self.requests_per_second = 0.3
+
         self.last_request_time = 0.0
+
+    def _validate_api_key(self, key):
+        is_success = True
+        error_message = ''
+        if not key or key == self.default_api_key:
+            error_message = 'Missing ETHERSCAN API Key or it same as default'
+            is_success = False
+
+        params = {
+            'module': 'block',
+            'action': 'getblockreward',
+            'blockno': 1,
+            'apikey': key
+        }
+
+        r = requests.get('https://api.etherscan.io/api', params=params)
+        data = r.json()
+        if data['result'] == 'Invalid API Key':
+            error_message = 'Invalid etherscan api key, will use default instead'
+            is_success = False
+
+        if not is_success:
+            print('WARNING!', error_message)
+            print('Without API key request limit will be set to `one request per 3 seconds`')
+
+        return is_success
 
     def get_internal_txs(self, block_number):
         """
@@ -117,13 +153,13 @@ class EtherScanAPI:
             time.sleep(seconds_for_request - time_diff)
             return self.get_internal_txs(block_number)
 
-    @staticmethod
-    def _get_internal_txs(block_number):
+    def _get_internal_txs(self, block_number):
         params = {
             'module': 'account',
             'action': 'txlistinternal',
             'startblock': block_number,
             'endblock': block_number,
+            'apikey': self.default_api_key
         }
 
         r = requests.get('https://api.etherscan.io/api', params=params)
