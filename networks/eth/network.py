@@ -143,23 +143,31 @@ class EtherScanAPI:
 
         return is_success
 
-    def get_internal_txs(self, block_number):
+    def get_internal_txs(self, block_number, attempt=0):
         """
         Return internal transactions by block number
 
         Compare API limit with last request time.
         If requests over limits - wait and try again after.
         """
+        if attempt >= 5:
+            raise TimeoutError(f'Too many attempts to get internal txs from {block_number} block')
+        attempt += 1
+
         seconds_for_request = 1 / self.requests_per_second
         now = time.time()
         time_diff = now - self.last_request_time
 
         if time_diff >= seconds_for_request:
-            self.last_request_time = now
-            return self._get_internal_txs(block_number)
+            try:
+                self.last_request_time = now
+                return self._get_internal_txs(block_number)
+            except APILimitError as e:
+                time.sleep(5)
+                return self.get_internal_txs(block_number, attempt)
         else:
             time.sleep(seconds_for_request - time_diff)
-            return self.get_internal_txs(block_number)
+            return self.get_internal_txs(block_number, attempt)
 
     def _get_internal_txs(self, block_number):
         params = {
@@ -173,5 +181,12 @@ class EtherScanAPI:
         r = requests.get(self.url, headers=self.headers, params=params)
         data = r.json()
 
-        txs = data.get('result')
-        return txs
+        if r.status_code == 200 and data['status'] == 1:
+            txs = data.get('result')
+            return txs
+        else:
+            raise APILimitError
+
+
+class APILimitError(Exception):
+    ...
