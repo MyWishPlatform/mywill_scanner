@@ -100,16 +100,19 @@ class EtherScanAPI:
 
     default_api_key = 'YourApiKeyToken'
 
+    # Used for beat CloudFire protection on etherscan-ropsten
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Geko/20100101 Firefox/69.0'}
+
     def __init__(self, api_key=None, testnet=False):
+        url_prefix = 'api' if testnet else 'api-ropsten'
+        self.url = f'https://{url_prefix}.etherscan.io/api'
+
         if self._validate_api_key(api_key):
             self.api_key = api_key
             self.requests_per_second = 5.0
         else:
             self.api_key = self.default_api_key
             self.requests_per_second = 0.3
-
-        url_prefix = 'api' if testnet else 'api-ropsten'
-        self.url = f'https://{url_prefix}.etherscan.io/api'
 
         self.last_request_time = 0.0
 
@@ -120,18 +123,19 @@ class EtherScanAPI:
             error_message = 'Missing ETHERSCAN API Key or it same as default'
             is_success = False
 
-        params = {
-            'module': 'block',
-            'action': 'getblockreward',
-            'blockno': 1,
-            'apikey': key
-        }
+        if key:
+            params = {
+                'module': 'block',
+                'action': 'getblockreward',
+                'blockno': 1,
+                'apikey': key
+            }
 
-        r = requests.get(self.url, params=params)
-        data = r.json()
-        if data['result'] == 'Invalid API Key':
-            error_message = 'Invalid etherscan api key, will use default instead'
-            is_success = False
+            r = requests.get(self.url, headers=self.headers, params=params)
+            data = r.json()
+            if data['result'] == 'Invalid API Key':
+                error_message = 'Invalid etherscan api key, will use default instead'
+                is_success = False
 
         if not is_success:
             print('WARNING!', error_message)
@@ -166,7 +170,7 @@ class EtherScanAPI:
             'apikey': self.default_api_key
         }
 
-        r = requests.get(self.url, params=params)
+        r = requests.get(self.url, headers=self.headers, params=params)
         data = r.json()
 
         txs = data.get('result')
