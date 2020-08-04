@@ -127,7 +127,7 @@ class EtherScanAPI:
             'apikey': key
         }
 
-        r = requests.get('https://api.etherscan.io/api', params=params)
+        r = requests.get(self.url, params=params)
         data = r.json()
         if data['result'] == 'Invalid API Key':
             error_message = 'Invalid etherscan api key, will use default instead'
@@ -166,7 +166,7 @@ class EtherScanAPI:
             'apikey': self.default_api_key
         }
 
-        r = requests.get('https://api.etherscan.io/api', params=params)
+        r = requests.get(self.url, params=params)
         data = r.json()
 
         txs = data.get('result')
