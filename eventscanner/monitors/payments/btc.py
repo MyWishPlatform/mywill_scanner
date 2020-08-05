@@ -9,6 +9,13 @@ class BTCPaymentMonitor:
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 
+    currency = 'BTC'
+
+    @classmethod
+    def address_from(cls, model):
+        s = cls.currency.lower() + '_address'
+        return getattr(model, s)
+
     @classmethod
     def on_new_block_event(cls, block_event: BlockEvent):
         if block_event.network.type not in cls.network_types:
@@ -17,14 +24,15 @@ class BTCPaymentMonitor:
         addresses = block_event.transactions_by_address.keys()
         user_site_balances = session \
             .query(UserSiteBalance) \
-            .filter(UserSiteBalance.btc_address.in_(addresses)) \
+            .filter(cls.address_from(UserSiteBalance).in_(addresses)) \
             .all()
         for usb in user_site_balances:
-            transactions = block_event.transactions_by_address[usb.btc_address]
+            address = cls.address_from(usb)
+            transactions = block_event.transactions_by_address[address]
 
             for transaction in transactions:
                 for output in transaction.outputs:
-                    if usb.btc_address not in output.address:
+                    if address not in output.address:
                         print('{}: Found transaction out from internal address. Skip it.'
                               .format(block_event.network.type), flush=True)
                         continue
@@ -32,7 +40,7 @@ class BTCPaymentMonitor:
                     message = {
                         'userId': usb.user_id,
                         'transactionHash': transaction.tx_hash,
-                        'currency': 'BTC',
+                        'currency': cls.currency,
                         'amount': output.value,
                         'siteId': usb.subsite_id,
                         'success': True,
@@ -40,3 +48,10 @@ class BTCPaymentMonitor:
                     }
 
                     send_to_backend(cls.event_type, cls.queue, message)
+
+
+class DucPaymentMonitor(BTCPaymentMonitor):
+    network_types = ['DUCATUS_MAINNET']
+    queue = NETWORKS[network_types[0]]['queue']
+
+    currency = 'DUC'

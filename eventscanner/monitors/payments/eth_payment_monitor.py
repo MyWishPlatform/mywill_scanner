@@ -6,9 +6,16 @@ from settings.settings_local import NETWORKS
 
 class EthPaymentMonitor:
 
-    network_types = ['ETHEREUM_MAINNET', 'DUCATUSX_MAINNET']
+    network_types = ['ETHEREUM_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
+
+    currency = 'ETH'
+
+    @classmethod
+    def address_from(cls, model):
+        s = cls.currency.lower() + '_address'
+        return getattr(model, s)
 
     @classmethod
     def on_new_block_event(cls, block_event: BlockEvent):
@@ -16,16 +23,17 @@ class EthPaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.eth_address.in_(addresses)).all()
+        user_site_balances = session.query(UserSiteBalance).filter(cls.address_from(UserSiteBalance).in_(addresses)).all()
         for user_site_balance in user_site_balances:
-            transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
+            address = cls.address_from(user_site_balance)
+            transactions = block_event.transactions_by_address[address.lower()]
 
             if not transactions:
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
                     block_event.network.type, user_site_balance, block_event.block.number))
 
             for transaction in transactions:
-                if user_site_balance.eth_address.lower() != transaction.outputs[0].address.lower():
+                if address.lower() != transaction.outputs[0].address.lower():
                     print('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type),
                           flush=True)
                     continue
@@ -35,7 +43,7 @@ class EthPaymentMonitor:
                 message = {
                     'userId': user_site_balance.user_id,
                     'transactionHash': transaction.tx_hash,
-                    'currency': 'ETH',
+                    'currency': cls.currency,
                     'amount': transaction.outputs[0].value,
                     'siteId': user_site_balance.subsite_id,
                     'success': tx_receipt.success,
@@ -43,3 +51,10 @@ class EthPaymentMonitor:
                 }
 
                 send_to_backend(cls.event_type, cls.queue, message)
+
+
+class DucxPaymentMonitor(EthPaymentMonitor):
+    network_types = ['DUCATUSX_MAINNET']
+    queue = NETWORKS[network_types[0]]['queue']
+
+    currency = 'DUCX'
