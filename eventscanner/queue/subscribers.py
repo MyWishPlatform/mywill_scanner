@@ -6,3 +6,6 @@ from eventscanner.monitors.payments import (BTCPaymentMonitor, EthPaymentMonitor
 pub.subscribe(BTCPaymentMonitor.on_new_block_event, 'BTC_MAINNET')
 pub.subscribe(ERC20PaymentMonitor.on_new_block_event, 'ETHEREUM_MAINNET')
 pub.subscribe(EthPaymentMonitor.on_new_block_event, 'ETHEREUM_MAINNET')
+
+pub.subscribe(BTCPaymentMonitor.on_new_block_event, 'DUCATUS_MAINNET')
+pub.subscribe(EthPaymentMonitor.on_new_block_event, 'DUCATUSX_MAINNET')

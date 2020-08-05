@@ -6,7 +6,7 @@ from settings.settings_local import NETWORKS
 
 class EthPaymentMonitor:
 
-    network_types = ['ETHEREUM_MAINNET']
+    network_types = ['ETHEREUM_MAINNET', 'DUCATUSX_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 

@@ -5,7 +5,7 @@ from settings.settings_local import NETWORKS
 
 
 class BTCPaymentMonitor:
-    network_types = ['BTC_MAINNET']
+    network_types = ['BTC_MAINNET', 'DUCATUS_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 
