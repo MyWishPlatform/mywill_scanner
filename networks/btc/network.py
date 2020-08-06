@@ -1,3 +1,5 @@
+from bitcoinrpc.authproxy import JSONRPCException
+
 from blockchain_common.btc_rpc import BTCInterface
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
@@ -18,7 +20,14 @@ class BTCNetwork(WrapperNetwork):
 
     def get_block(self, number: int) -> WrapperBlock:
         block_hash = self.interface.rpc.getblockhash(number)
-        block = self.interface.rpc.getblock(block_hash, 2)
+
+        # For BTC we can obtain block with filled tx objects,
+        # but some rpc don't support this, and we need to obtain all tx manually
+        try:
+            block = self.interface.rpc.getblock(block_hash, 2)
+        except JSONRPCException:
+            block = self.interface.rpc.getblock(block_hash, True)
+            block['tx'] = [self.interface.rpc.getrawtransaction(t, 1) for t in block['tx']]
 
         transactions = [WrapperTransaction(
             t['txid'],
