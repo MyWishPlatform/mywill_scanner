@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
+from mywish_models.models import ExchangeRequests, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
@@ -22,12 +22,12 @@ class BTCPaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        user_site_balances = session \
-            .query(UserSiteBalance) \
-            .filter(cls.address_from(UserSiteBalance).in_(addresses)) \
+        query_result = session \
+            .query(ExchangeRequests) \
+            .filter(cls.address_from(ExchangeRequests).in_(addresses)) \
             .all()
-        for usb in user_site_balances:
-            address = cls.address_from(usb)
+        for model in query_result:
+            address = cls.address_from(model)
             transactions = block_event.transactions_by_address[address]
 
             for transaction in transactions:
@@ -38,11 +38,11 @@ class BTCPaymentMonitor:
                         continue
 
                     message = {
-                        'userId': usb.user_id,
+                        'exchangeId': model.user_id,
+                        'address': address,
                         'transactionHash': transaction.tx_hash,
                         'currency': cls.currency,
                         'amount': output.value,
-                        'siteId': usb.subsite_id,
                         'success': True,
                         'status': 'COMMITTED'
                     }

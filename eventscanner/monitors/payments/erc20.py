@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
+from mywish_models.models import ExchangeRequests, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS, ERC20_TOKENS
 
@@ -34,8 +34,8 @@ class ERC20PaymentMonitor:
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
-            user_site_balance = session.query(UserSiteBalance).\
-                filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
+            user_site_balance = session.query(ExchangeRequests).\
+                filter(ExchangeRequests.eth_address == transfer_to.lower()).first()
             if not user_site_balance:
                 return
 
