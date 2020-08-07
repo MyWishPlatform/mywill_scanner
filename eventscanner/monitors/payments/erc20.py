@@ -34,16 +34,15 @@ class ERC20PaymentMonitor:
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
-            user_site_balance = session.query(ExchangeRequests).\
+            model = session.query(ExchangeRequests).\
                 filter(ExchangeRequests.eth_address == transfer_to.lower()).first()
-            if not user_site_balance:
+            if not model:
                 return
 
             message = {
-                "userId": user_site_balance.user_id,
-                "siteId": user_site_balance.subsite_id,
+                'exchangeId': model.id,
                 "transactionHash": tx.tx_hash,
-                "address": user_site_balance.eth_address,
+                "address": model.eth_address,
                 "amount": tokens_amount,
                 "currency": token_name,
                 "status": "COMMITTED",
