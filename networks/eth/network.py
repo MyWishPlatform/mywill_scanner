@@ -22,7 +22,7 @@ class EthNetwork(WrapperNetwork):
 
         etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
         is_testnet = NETWORKS[type].get('is_testnet')
-        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
+        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet) if etherscan_api_key else None
 
         self.erc20_contracts_dict = {t_name: self.web3.eth.contract(
             self.web3.toChecksumAddress(t_address),
@@ -42,7 +42,7 @@ class EthNetwork(WrapperNetwork):
         )
 
         internal_txs = [self._build_transaction(t)
-                        for t in self.etherscan.get_internal_txs(number)]
+                        for t in self.etherscan.get_internal_txs(number)] if self.etherscan else []
         block.transactions += internal_txs
 
         return block
