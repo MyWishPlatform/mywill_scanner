@@ -33,13 +33,15 @@ class EthScanner(ScannerPolling):
 
     def _check_tx_to(self, tx, address):
         to_address = tx.outputs[0]
-
         if to_address and to_address.address:
             address[to_address.address.lower()].append(tx)
         else:
             self._check_tx_creates(tx, address)
 
     def _check_tx_creates(self, tx, address):
+        if not tx.contract_creation:
+            return
+
         if tx.creates:
             address[tx.creates.lower()].append(tx)
         else:
