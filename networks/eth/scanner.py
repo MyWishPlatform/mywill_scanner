@@ -45,7 +45,12 @@ class EthScanner(ScannerPolling):
         else:
             try:
                 tx_receipt = self.network.get_tx_receipt(tx.tx_hash)
-                contract_address = tx_receipt.contracts[0]
+
+                # This field can be str and list, but list must be deprecated from java
+                if isinstance(tx_receipt.contracts, list):
+                    contract_address = tx_receipt.contracts[0]
+                else:
+                    contract_address = tx_receipt.contracts
                 tx.creates = contract_address
                 address[contract_address.lower()].append(tx)
             except Exception:

@@ -61,6 +61,8 @@ class EthNetwork(WrapperNetwork):
             tx['input']
         )
 
+        # Field 'to' is empty when tx creates contract
+        contract_creation = tx['to'] is None
         tx_creates = tx.get('creates', None)
 
         # 'creates' is None when tx dont create any contract
@@ -68,7 +70,7 @@ class EthNetwork(WrapperNetwork):
             tx_hash,
             [tx['from']],
             [output],
-            bool(tx_creates),
+            contract_creation,
             tx_creates
         )
         return t
