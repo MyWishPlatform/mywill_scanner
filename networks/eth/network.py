@@ -57,7 +57,7 @@ class EthNetwork(WrapperNetwork):
             tx_hash,
             0,
             tx['to'],
-            tx['value'],
+            int(tx['value']),
             tx['input']
         )
 
