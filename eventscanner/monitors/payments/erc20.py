@@ -37,7 +37,7 @@ class ERC20PaymentMonitor:
             model = session.query(ExchangeRequests).\
                 filter(ExchangeRequests.eth_address == transfer_to.lower()).first()
             if not model:
-                return
+                continue
 
             message = {
                 'exchangeId': model.id,
