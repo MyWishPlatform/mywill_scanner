@@ -112,7 +112,6 @@ __pycache__/
 *.iml
 gunicorn.conf.py
 settings_local.py
-.idea/
 /venv/
 /*/migrations/
 /*/*/migrations/
@@ -120,7 +119,6 @@ settings_local.py
 /*/__pycache__/
 /*/*/__pycache__/
 /merchant_api/settings_local.py
-gunicorn.conf.py
 db.sqlite3
 .vscode/
 settings/
