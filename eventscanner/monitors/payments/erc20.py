@@ -22,7 +22,7 @@ class ERC20PaymentMonitor:
             token_address = token_address.lower()
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
-                return cls.handle(token_address, token_name, transactions, block_event.network)
+                cls.handle(token_address, token_name, transactions, block_event.network)
 
     @classmethod
     def handle(cls, token_address: str, token_name, transactions, network):
@@ -31,6 +31,11 @@ class ERC20PaymentMonitor:
                 continue
 
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
+            if not processed_receipt:
+                print('{}: WARNING! Can`t handle tx {}, probably we dont support this event'.format(
+                    cls.network_types[0], tx.tx_hash), flush=True)
+                return
+
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
