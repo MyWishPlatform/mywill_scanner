@@ -27,7 +27,7 @@ class TransferMonitor:
         for transfer in transfers:
             message = {
                 'transactionHash': transfer.tx_hash,
-                'transferId': transfers.id,
+                'transferId': transfer.id,
                 'currency': cls.currency,
                 'amount': transfer.amount,
                 'success': True,
