@@ -29,7 +29,7 @@ class TransferMonitor:
                 'transactionHash': transfer.tx_hash,
                 'transferId': transfer.id,
                 'currency': cls.currency,
-                'amount': transfer.amount,
+                'amount': int(transfer.amount),
                 'success': True,
                 'status': 'COMMITTED',
             }
