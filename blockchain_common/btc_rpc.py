@@ -16,8 +16,12 @@ class BTCInterface:
         self.settings = NETWORKS[net_type]
         self.decimal = DECIMALS['BTC']
         self.setup_endpoint()
-        self.rpc = AuthServiceProxy(self.endpoint)
+        self._rpc = AuthServiceProxy
         self.check_connection()
+
+    @property
+    def rpc(self):
+        return self._rpc(self.endpoint)
 
     def setup_endpoint(self):
         self.endpoint = 'http://{user}:{pwd}@{host}:{port}'.format(
