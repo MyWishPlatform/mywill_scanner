@@ -4,6 +4,7 @@ import time
 import traceback
 
 from base.network import Network
+from tg_alerts import send_messages
 
 
 class LastBlockPersister:
@@ -30,6 +31,8 @@ class LastBlockPersister:
 class Scanner:
     INFO_INTERVAL = 60000
     WARN_INTERVAL = 120000
+    last_block_time: float
+    next_block_number: int
 
     def __init__(self, network: Network, last_block_persister: LastBlockPersister, polling_interval: int,
                  commitment_chain_length: int, reach_interval: int = 0):
@@ -46,9 +49,12 @@ class Scanner:
     def poller(self):
         self.last_block_time = time.time()
         self.next_block_number = self.last_block_persister.get_last_block()
+        warning_block_time = 25 * 60
         print('hello from {}'.format(self.network.type), flush=True)
         while True:
             self.polling()
+            if self.last_block_time >= warning_block_time:
+                self.send_tg_message('LBT')
 
     def polling(self):
         try:
@@ -73,6 +79,7 @@ class Scanner:
         except Exception as e:
             print('{}: exception handled in polling cycle. Continue.'.format(self.network.type))
             print('\n'.join(traceback.format_exception(*sys.exc_info())), flush=True)
+            self.send_tg_error_message()
 
         time.sleep(self.polling_interval)
 
@@ -90,3 +97,9 @@ class Scanner:
 
     def close(self):
         pass
+
+    def send_tg_error_message(self):
+        print('alert!')
+
+    def send_tg_message(self, message):
+        send_messages(message)
