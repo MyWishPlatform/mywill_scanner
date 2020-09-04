@@ -1,4 +1,5 @@
 import os
+import datetime
 import sys
 import time
 import traceback
@@ -53,8 +54,14 @@ class Scanner:
         print('hello from {}'.format(self.network.type), flush=True)
         while True:
             self.polling()
+
             if self.last_block_time >= warning_block_time:
-                self.send_tg_message('LBT')
+                last_block_time_dt = datetime.datetime.fromtimestamp(self.last_block_time)
+                diff = datetime.datetime.now() - last_block_time_dt
+                warn_msg = (f'Warning! Skipped too many blocks in {self.network.type}.\n' +
+                            f'last block time {last_block_time_dt}\n' +
+                            f'Its around {diff.min} minutes')
+                send_messages(warn_msg)
 
     def polling(self):
         try:
@@ -77,9 +84,10 @@ class Scanner:
 
             print('{}: all blocks processed, wait new one.'.format(self.network.type))
         except Exception as e:
-            print('{}: exception handled in polling cycle. Continue.'.format(self.network.type))
-            print('\n'.join(traceback.format_exception(*sys.exc_info())), flush=True)
-            self.send_tg_error_message()
+            error_traceback = '{}: exception handled in polling cycle. Continue.'.format(self.network.type)
+            error_traceback += '\n'.join(traceback.format_exception(*sys.exc_info()))
+            print(error_traceback, flush=True)
+            send_messages(error_traceback)
 
         time.sleep(self.polling_interval)
 
@@ -98,8 +106,3 @@ class Scanner:
     def close(self):
         pass
 
-    def send_tg_error_message(self):
-        print('alert!')
-
-    def send_tg_message(self, message):
-        send_messages(message)
