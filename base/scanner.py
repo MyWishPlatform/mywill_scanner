@@ -50,17 +50,21 @@ class Scanner:
     def poller(self):
         self.last_block_time = time.time()
         self.next_block_number = self.last_block_persister.get_last_block()
-        warning_block_time = 25 * 60
+        warning_block_seconds = 25 * 60
         print('hello from {}'.format(self.network.type), flush=True)
         while True:
             self.polling()
 
-            if self.last_block_time >= warning_block_time:
+            now = time.time()
+            diff = now - self.last_block_time
+
+            if diff >= warning_block_seconds:
                 last_block_time_dt = datetime.datetime.fromtimestamp(self.last_block_time)
-                diff = datetime.datetime.now() - last_block_time_dt
+                td = datetime.timedelta(seconds=diff)
                 warn_msg = (f'Warning! Skipped too many blocks in {self.network.type}.\n' +
-                            f'last block time {last_block_time_dt}\n' +
-                            f'Its around {diff.min} minutes')
+                            f'Last block time {last_block_time_dt}\n' +
+                            f'Its around {round(td.seconds / 60)} minutes ' +
+                            f'and {td.days} days')
                 send_messages(warn_msg)
 
     def polling(self):
