@@ -1,7 +1,7 @@
 import os
 
 
-filename = '../tg_ids'
+filename = 'tg_ids'
 
 if not os.path.exists(filename):
     open(filename, 'a').close()
