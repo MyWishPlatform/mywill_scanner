@@ -1,1 +1,1 @@
-from .tg_alerts import alert_bot
+from .bot import alert_bot
