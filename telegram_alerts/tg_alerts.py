@@ -5,7 +5,15 @@ from .storage import get_saved_chat_ids, write_new_chat_ids
 
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    text = ("Hi! I'm alert bot for one of scanner projects\n"
+            "I have several commands, like:\n\n"
+            "/register - you subscibing into my spam hell\n\n"
+            "/stop - i will stop send you all this logs\n\n"
+            "With these commands you can start me here "
+            "or inside a chat with your friends.\n"
+            "You can all enjoy my bug reports! "
+            )
+    context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 def register(update, context):
