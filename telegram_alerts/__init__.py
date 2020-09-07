@@ -1,1 +1,1 @@
-from .tg_alerts import updater, send_messages
+from .tg_alerts import alert_bot

@@ -3,9 +3,6 @@ from telegram.ext import Updater, CommandHandler
 from settings.settings_local import TG_TOKEN
 from .storage import get_saved_chat_ids, write_new_chat_ids
 
-updater = Updater(token=TG_TOKEN, use_context=True)
-dispatcher = updater.dispatcher
-
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
@@ -36,16 +33,23 @@ def stop(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
-start_handler = CommandHandler('start', start)
-register_handler = CommandHandler('register', register)
-stop_handler = CommandHandler('stop', stop)
+class AlertBot:
+    def __init__(self):
+        self.updater = Updater(token=TG_TOKEN, use_context=True)
+        dispatcher = self.updater.dispatcher
 
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(register_handler)
-dispatcher.add_handler(stop_handler)
+        start_handler = CommandHandler('start', start)
+        register_handler = CommandHandler('register', register)
+        stop_handler = CommandHandler('stop', stop)
+
+        dispatcher.add_handler(start_handler)
+        dispatcher.add_handler(register_handler)
+        dispatcher.add_handler(stop_handler)
+
+    def send_messages(self, text):
+        ids = get_saved_chat_ids()
+        for id in ids:
+            self.updater.bot.send_message(id, text)
 
 
-def send_messages(text):
-    ids = get_saved_chat_ids()
-    for id in ids:
-        updater.bot.send_message(id, text)
+alert_bot = AlertBot()

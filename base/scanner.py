@@ -5,7 +5,7 @@ import time
 import traceback
 
 from base.network import Network
-from telegram_alerts import send_messages
+from telegram_alerts import alert_bot
 
 
 class LastBlockPersister:
@@ -65,7 +65,7 @@ class Scanner:
                             f'Last block time {last_block_time_dt}\n' +
                             f'Its around {round(td.seconds / 60)} minutes ' +
                             f'and {td.days} days')
-                send_messages(warn_msg)
+                alert_bot.send_messages(warn_msg)
 
     def polling(self):
         try:
@@ -91,7 +91,7 @@ class Scanner:
             error_traceback = '{}: exception handled in polling cycle. Continue.'.format(self.network.type)
             error_traceback += '\n'.join(traceback.format_exception(*sys.exc_info()))
             print(error_traceback, flush=True)
-            send_messages(error_traceback)
+            alert_bot.send_messages(error_traceback)
 
         time.sleep(self.polling_interval)
 
