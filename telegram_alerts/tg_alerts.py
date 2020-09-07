@@ -46,6 +46,9 @@ class AlertBot:
         dispatcher.add_handler(register_handler)
         dispatcher.add_handler(stop_handler)
 
+    def start_polling(self):
+        self.updater.start_polling()
+
     def send_messages(self, text):
         ids = get_saved_chat_ids()
         for id in ids:
