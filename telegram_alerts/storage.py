@@ -1,7 +1,7 @@
 import os
 
-
-filename = 'tg_ids'
+# Add filename relative to script path
+filename = os.path.join(os.path.dirname(__file__), 'tg_ids')
 
 if not os.path.exists(filename):
     open(filename, 'a').close()
