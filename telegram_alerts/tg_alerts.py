@@ -1,6 +1,6 @@
 from telegram.ext import Updater, CommandHandler
 
-from settings.settings_local import TG_TOKEN
+from settings import settings_local
 from .storage import get_saved_chat_ids, write_new_chat_ids
 
 
@@ -43,7 +43,13 @@ def stop(update, context):
 
 class AlertBot:
     def __init__(self):
-        self.updater = Updater(token=TG_TOKEN, use_context=True)
+        token = getattr(settings_local, 'TELEGRAM_TOKEN', None)
+        if not token:
+            self.updater = None
+            print('WARNING! Cant start bot without token in settings', flush=True)
+            return
+
+        self.updater = Updater(token=token, use_context=True)
         dispatcher = self.updater.dispatcher
 
         start_handler = CommandHandler('start', start)
@@ -55,9 +61,15 @@ class AlertBot:
         dispatcher.add_handler(stop_handler)
 
     def start_polling(self):
+        if not self.updater:
+            return
+
         self.updater.start_polling()
 
     def send_messages(self, text):
+        if not self.updater:
+            return
+
         ids = get_saved_chat_ids()
         for id in ids:
             self.updater.bot.send_message(id, text)
