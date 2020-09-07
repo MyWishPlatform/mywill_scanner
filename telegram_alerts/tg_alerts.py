@@ -1,29 +1,8 @@
-import os
-
 from telegram.ext import Updater, CommandHandler
 
 from settings.settings_local import TG_TOKEN
+from .storage import get_saved_chat_ids, write_new_chat_ids
 
-# File logic
-filename = '../tg_ids'
-
-if not os.path.exists(filename):
-    open(filename, 'a').close()
-
-
-def get_saved_chat_ids():
-    with open(filename, 'r+') as f:
-        content = f.read()
-
-        return [int(i) for i in content.split(';')] if content else []
-
-
-def write_new_chat_ids(ids):
-    with open(filename, 'w+') as f:
-        f.write(';'.join((str(i) for i in ids)))
-
-
-# Bot logic
 updater = Updater(token=TG_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
