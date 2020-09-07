@@ -5,7 +5,7 @@ import time
 import traceback
 
 from base.network import Network
-from tg_alerts import send_messages
+from telegram_alerts import send_messages
 
 
 class LastBlockPersister:

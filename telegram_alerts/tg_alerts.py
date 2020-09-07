@@ -5,7 +5,7 @@ from telegram.ext import Updater, CommandHandler
 from settings.settings_local import TG_TOKEN
 
 # File logic
-filename = 'tg_ids'
+filename = '../tg_ids'
 
 if not os.path.exists(filename):
     open(filename, 'a').close()
