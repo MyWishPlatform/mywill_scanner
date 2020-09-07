@@ -3,16 +3,31 @@ from telegram.ext import Updater, CommandHandler
 from settings import settings_local
 from .storage import get_saved_chat_ids, write_new_chat_ids
 
+help_message = """/help - see command and description again\n
+/ping - Check if I'm alive\n
+/register - you subscibing into my spam hell\n
+/stop - i will stop send you all this logs\n
+"""
+
 
 def start(update, context):
     text = ("Hi! I'm alert bot for one of scanner projects\n"
             "I have several commands, like:\n\n"
-            "/register - you subscibing into my spam hell\n\n"
-            "/stop - i will stop send you all this logs\n\n"
+            + help_message +
             "With these commands you can start me here "
             "or inside a chat with your friends.\n"
             "You can all enjoy my bug reports! "
             )
+    context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+def bot_help(update, context):
+    text = help_message
+    context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+def ping(update, context):
+    text = "I'm alive, scanner working now, muddy is mudding, laveha is spinning"
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
@@ -53,10 +68,14 @@ class AlertBot:
         dispatcher = self.updater.dispatcher
 
         start_handler = CommandHandler('start', start)
+        help_handler = CommandHandler('help', bot_help)
+        ping_handler = CommandHandler('ping', ping)
         register_handler = CommandHandler('register', register)
         stop_handler = CommandHandler('stop', stop)
 
         dispatcher.add_handler(start_handler)
+        dispatcher.add_handler(help_handler)
+        dispatcher.add_handler(ping_handler)
         dispatcher.add_handler(register_handler)
         dispatcher.add_handler(stop_handler)
 
@@ -71,8 +90,8 @@ class AlertBot:
             return
 
         ids = get_saved_chat_ids()
-        for id in ids:
-            self.updater.bot.send_message(id, text)
+        for _id in ids:
+            self.updater.bot.send_message(_id, text)
 
 
 alert_bot = AlertBot()
