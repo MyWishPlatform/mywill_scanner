@@ -39,19 +39,18 @@ class ERC20PaymentMonitor:
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
-            model = session.query(ExchangeRequests).\
-                filter(ExchangeRequests.eth_address == transfer_to.lower()).first()
-            if not model:
-                continue
+            exchange = session.query(ExchangeRequests). \
+                filter(ExchangeRequests.generated_address == transfer_to.lower()).first()
+            if not exchange:
+                return
 
             message = {
-                'exchangeId': model.id,
-                "transactionHash": tx.tx_hash,
-                "address": model.eth_address,
-                "amount": tokens_amount,
-                "currency": token_name,
-                "status": "COMMITTED",
-                "success": True
+                'exchangeId': exchange.id,
+                'transactionHash': tx.tx_hash,
+                'amount': tokens_amount,
+                'currency': token_name,
+                'status': 'COMMITTED',
+                'success': True
             }
 
             send_to_backend(cls.event_type, cls.queue, message)

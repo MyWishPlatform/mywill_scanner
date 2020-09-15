@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import Transfers, session
+from mywish_models.models import Transfer, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
@@ -20,9 +20,9 @@ class TransferMonitor:
                 tx_hashes.add(transaction.tx_hash)
 
         transfers = session \
-            .query(Transfers) \
-            .filter(Transfers.tx_hash.in_(tx_hashes), Transfers.currency == cls.currency) \
-            .distinct(Transfers.tx_hash) \
+            .query(Transfer) \
+            .filter(Transfer.tx_hash.in_(tx_hashes), Transfer.currency == cls.currency) \
+            .distinct(Transfer.tx_hash) \
             .all()
         for transfer in transfers:
             message = {
@@ -36,11 +36,6 @@ class TransferMonitor:
             send_to_backend(cls.event_type, NETWORKS[block_event.network.type]['queue'], message)
 
 
-class DucxTransferMonitor(TransferMonitor):
-    network_type = ['DUCATUSX_MAINNET']
-    currency = 'DUCX'
-
-
-class DucTransferMonitor(TransferMonitor):
-    network_type = ['DUCATUS_MAINNET']
-    currency = 'DUC'
+class QurasTransferMonitor(TransferMonitor):
+    network_type = ['QURAS_MAINNET']
+    currency = 'XQC_NATIVE'
