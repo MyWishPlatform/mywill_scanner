@@ -2,7 +2,7 @@ from eventscanner.queue.pika_handler import send_to_backend
 from mywish_models.models import ExchangeRequests, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS, ERC20_TOKENS
-to_address=['0x0000000000000000000000000000000000000000']
+to_address='0x0000000000000000000000000000000000000000'
 
 
 class ERC20PaymentMonitor:
