@@ -44,7 +44,7 @@ class ERC20PaymentMonitor:
             if to_address!=processed_receipt[0].args.to:
                 print('third if')
                 print(to_address)
-                print(tx.outputs[0].address.lower())
+                print(processed_receipt[0].args.to)
                 continue
             
             transfer_to = processed_receipt[0].args.to
