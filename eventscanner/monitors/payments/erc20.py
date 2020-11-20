@@ -19,8 +19,10 @@ class ERC20PaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
+        print(addresses)
         for token_name, token_address in cls.tokens.items():
             token_address = token_address.lower()
+            print(token_address)
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
                 cls.handle(token_address, token_name, transactions, block_event.network)
@@ -37,7 +39,7 @@ class ERC20PaymentMonitor:
                     cls.network_types[0], tx.tx_hash), flush=True)
                 continue
 
-            if to_address!=tx.outputs[0].address.lower():
+            if to_address!=transaction.outputs[0].address.lower():
                 continue
             
             transfer_to = processed_receipt[0].args.to
