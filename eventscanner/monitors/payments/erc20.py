@@ -53,6 +53,8 @@ class ERC20PaymentMonitor:
             exchange = session.query(ExchangeRequests). \
                 filter(ExchangeRequests.from_address == tx.inputs[0].lower(), ExchangeRequests.address == processed_receipt[0].args.to.lower()).first()
             print (exchange)
+            print (tx.inputs[0].lower())
+            print (processed_receipt[0].args.to.lower())
             if not exchange:
                 print('fourth if')
                 continue
