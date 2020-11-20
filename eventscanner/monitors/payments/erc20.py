@@ -39,7 +39,7 @@ class ERC20PaymentMonitor:
                     cls.network_types[0], tx.tx_hash), flush=True)
                 continue
 
-            if to_address!=transaction.outputs[0].address.lower():
+            if to_address!=tx.outputs[0].address.lower():
                 continue
             
             transfer_to = processed_receipt[0].args.to
