@@ -22,22 +22,27 @@ class ERC20PaymentMonitor:
         for token_name, token_address in cls.tokens.items():
             token_address = token_address.lower()
             if token_address in addresses:
+                print('START')
                 transactions = block_event.transactions_by_address[token_address]
+                print('transactions: {}'.format(transactions), flush=True)
                 cls.handle(token_address, token_name, transactions, block_event.network)
 
     @classmethod
     def handle(cls, token_address: str, token_name, transactions, network):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
+                print('first if')
                 continue
 
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
             if not processed_receipt:
                 print('{}: WARNING! Can`t handle tx {}, probably we dont support this event'.format(
                     cls.network_types[0], tx.tx_hash), flush=True)
+                print('second if')
                 continue
 
             if to_address!=tx.outputs[0].address.lower():
+                print('third if')
                 continue
             
             transfer_to = processed_receipt[0].args.to
@@ -47,6 +52,7 @@ class ERC20PaymentMonitor:
                 filter(ExchangeRequests.from_address == transfer_to.lower()).first()
             print (exchange)
             if not exchange:
+                print('fourth if')
                 continue
 
             message = {
