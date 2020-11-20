@@ -41,7 +41,7 @@ class ERC20PaymentMonitor:
                 print('second if')
                 continue
 
-            if to_address!=tx.outputs[0].address.lower():
+            if to_address!=processed_receipt[0].args.to:
                 print('third if')
                 print(to_address)
                 print(tx.outputs[0].address.lower())
