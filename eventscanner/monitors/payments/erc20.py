@@ -49,10 +49,9 @@ class ERC20PaymentMonitor:
             
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
-
+            print(tx.inputs[0].lower())
             exchange = session.query(ExchangeRequests). \
                 filter(ExchangeRequests.from_address == tx.inputs[0].lower()).first()
-            print(tx.inputs[0].lower())
             print (exchange)
             if not exchange:
                 print('fourth if')
