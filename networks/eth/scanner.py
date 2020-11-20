@@ -20,7 +20,7 @@ class EthScanner(ScannerPolling):
             self._check_tx_from(transaction, address_transactions)
             self._check_tx_to(transaction, address_transactions)
 
-        print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
+        #print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
         block_event = BlockEvent(self.network, block, address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
