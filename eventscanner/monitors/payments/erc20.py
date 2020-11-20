@@ -19,10 +19,8 @@ class ERC20PaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        print(addresses)
         for token_name, token_address in cls.tokens.items():
             token_address = token_address.lower()
-            print(token_address)
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
                 cls.handle(token_address, token_name, transactions, block_event.network)
@@ -47,6 +45,7 @@ class ERC20PaymentMonitor:
 
             exchange = session.query(ExchangeRequests). \
                 filter(ExchangeRequests.generated_address == transfer_to.lower()).first()
+            print (exchange)
             if not exchange:
                 continue
 
