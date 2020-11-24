@@ -1,4 +1,5 @@
 import collections
+import time
 
 from blockchain_common.wrapper_block import WrapperBlock
 from eventscanner.queue.subscribers import pub
@@ -9,6 +10,7 @@ from scanner.services.scanner_polling import ScannerPolling
 class MatScanner(ScannerPolling):
 
     def process_block(self, block: WrapperBlock):
+        time.sleep(1.1)
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:
