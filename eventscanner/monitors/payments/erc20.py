@@ -6,7 +6,7 @@ from settings.settings_local import NETWORKS, ERC20_TOKENS
 
 class ERC20PaymentMonitor:
 
-    network_types = ['ETHEREUM_MAINNET']
+    network_types = ['MATIC_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 

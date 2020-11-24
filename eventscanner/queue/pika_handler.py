@@ -5,9 +5,6 @@ import json
 def send_to_backend(type, queue, message):
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         'localhost',
-        5672,
-        'mywill',
-        pika.PlainCredentials('java', 'java'),
     ))
     channel = connection.channel()
     channel.queue_declare(queue=queue, durable=True, auto_delete=False,

@@ -1,12 +1,12 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
+#from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
 
-class EthPaymentMonitor:
+class MatPaymentMonitor:
 
-    network_types = ['ETHEREUM_MAINNET']
+    network_types = ['MATIC_MAINNET']
     event_type = 'payment'
     queue = NETWORKS[network_types[0]]['queue']
 

@@ -3,6 +3,7 @@ import time
 import requests
 from hexbytes import HexBytes
 from web3 import Web3
+from web3.middleware import geth_poa_middleware
 
 from blockchain_common.eth_tokens import erc20_abi
 from blockchain_common.wrapper_block import WrapperBlock
@@ -13,13 +14,13 @@ from blockchain_common.wrapper_transaction_receipt import WrapperTransactionRece
 from settings.settings_local import NETWORKS, ERC20_TOKENS
 
 
-class EthNetwork(WrapperNetwork):
+class MatNetwork(WrapperNetwork):
 
     def __init__(self, type):
         super().__init__(type)
         url = NETWORKS[type]['url']
         self.web3 = Web3(Web3.HTTPProvider(url))
-
+        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
         is_testnet = NETWORKS[type].get('is_testnet')
         self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
@@ -34,6 +35,7 @@ class EthNetwork(WrapperNetwork):
 
     def get_block(self, number: int) -> WrapperBlock:
         block = self.web3.eth.getBlock(number, full_transactions=True)
+        print(block)
         block = WrapperBlock(
             block['hash'].hex(),
             block['number'],
@@ -41,9 +43,9 @@ class EthNetwork(WrapperNetwork):
             [self._build_transaction(t) for t in block['transactions']],
         )
 
-        internal_txs = [self._build_transaction(t)
-                        for t in self.etherscan.get_internal_txs(number)]
-        block.transactions += internal_txs
+        #internal_txs = [self._build_transaction(t)
+        #                for t in self.etherscan.get_internal_txs(number)]
+        #block.transactions += internal_txs
 
         return block
 
@@ -106,8 +108,8 @@ class EtherScanAPI:
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Geko/20100101 Firefox/69.0'}
 
     def __init__(self, api_key=None, testnet=False):
-        url_prefix = 'api-ropsten' if testnet else 'api'
-        self.url = f'https://{url_prefix}.etherscan.io/api'
+        url_prefix = 'explorer-mumbai' if testnet else 'explorer-mumbai'
+        self.url = f'https://{url_prefix}.maticvigil.com/api'
 
         if self._validate_api_key(api_key):
             self.api_key = api_key
@@ -174,20 +176,21 @@ class EtherScanAPI:
     def _get_internal_txs(self, block_number):
         params = {
             'module': 'account',
-            'action': 'txlistinternal',
+            'action': 'balance',
             'startblock': block_number,
             'endblock': block_number,
             'apikey': self.api_key
         }
-
+        print(params)
         r = requests.get(self.url, headers=self.headers, params=params)
+        print('response'.format(r))
         data = r.json()
-
+        print(data)
         if r.status_code == 200 and data['status'] == '1':
             txs = data.get('result')
             return txs
         else:
-            if data['message'] == 'No transactions found':
+            if data['message'] == 'Unknown action':
                 return []
             raise APILimitError(data['message'])
 

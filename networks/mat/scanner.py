@@ -6,7 +6,7 @@ from scanner.events.block_event import BlockEvent
 from scanner.services.scanner_polling import ScannerPolling
 
 
-class EthScanner(ScannerPolling):
+class MatScanner(ScannerPolling):
 
     def process_block(self, block: WrapperBlock):
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
