@@ -34,18 +34,14 @@ class MatScanner(ScannerPolling):
     def _check_tx_to(self, tx, address):
         to_address = tx.outputs[0]
         if to_address and to_address.address:
-            print('NO CREATION')
             address[to_address.address.lower()].append(tx)
         else:
-            print('go to creation')
             self._check_tx_creates(tx, address)
 
     def _check_tx_creates(self, tx, address):
         if not tx.contract_creation:
-            return
-        print ('tx.contract_creation: {}'.format(tx.contract_creation))
+            retur
         if tx.creates:
-            print('tx.creates: {}'.format(tx.creates))
             address[tx.creates.lower()].append(tx)
         else:
             try:
