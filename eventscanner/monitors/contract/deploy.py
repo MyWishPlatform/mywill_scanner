@@ -7,7 +7,7 @@ from settings.settings_local import NETWORKS
 
 
 class DeployMonitor:
-    network_types = ['MATIC_MAINNET']
+    network_types = ['MATIC_MAINNET', 'MATIC_TESTNET']
     event_type = 'deployed'
 
     @classmethod
