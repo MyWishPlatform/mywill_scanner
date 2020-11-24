@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-#from mywish_models.models import UserSiteBalance, session
+from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
