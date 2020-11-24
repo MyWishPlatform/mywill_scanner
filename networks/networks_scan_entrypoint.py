@@ -9,7 +9,8 @@ from networks import MatMaker
 from settings.settings_local import NETWORKS
 
 networks = {
-    'MATIC_MAINNET': MatMaker
+    'MATIC_MAINNET': MatMaker,
+    'MATIC_TESTNET': MatMaker,
 }
 
 
