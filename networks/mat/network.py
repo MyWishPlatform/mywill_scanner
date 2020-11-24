@@ -107,7 +107,7 @@ class EtherScanAPI:
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Geko/20100101 Firefox/69.0'}
 
     def __init__(self, api_key=None, testnet=False):
-        url_prefix = 'explorer-mumbai' if testnet else 'explorer-mumbai'
+        url_prefix = 'explorer-mumbai' if testnet else 'explorer-mainnet'
         self.url = f'https://{url_prefix}.maticvigil.com/api'
 
         if self._validate_api_key(api_key):
