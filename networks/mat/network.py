@@ -35,7 +35,6 @@ class MatNetwork(WrapperNetwork):
 
     def get_block(self, number: int) -> WrapperBlock:
         block = self.web3.eth.getBlock(number, full_transactions=True)
-        print(block)
         block = WrapperBlock(
             block['hash'].hex(),
             block['number'],
