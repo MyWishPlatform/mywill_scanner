@@ -39,3 +39,8 @@ class TransferMonitor:
 class QurasTransferMonitor(TransferMonitor):
     network_type = ['QURAS_MAINNET']
     currency = 'XQC_NATIVE'
+
+
+class EthTransferMonitor(TransferMonitor):
+    network_type = ['ETHEREUM_MAINNET']
+    currency = 'ETH'
