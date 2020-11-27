@@ -15,9 +15,11 @@ class QurasScanner(ScannerPolling):
 
         address_transactions = defaultdict(list)
         for transaction in block.transactions:
+            for input in transaction.inputs:
+                for inp in input:
+                    address_transactions[inp.lower()].append(transaction)
             for output in transaction.outputs:
-                for a in output.address:
-                    address_transactions[a].append(transaction)
+                    address_transactions[output.address].append(transaction)
 
         print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
         block_event = BlockEvent(self.network, block, address_transactions)

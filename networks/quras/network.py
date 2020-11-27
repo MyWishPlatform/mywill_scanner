@@ -18,14 +18,18 @@ class QurasNetwork(WrapperNetwork):
 
     def get_block(self, number: int) -> WrapperBlock:
         block = self.rpc.getblock(number, 1)
-
-        transactions = [WrapperTransaction(
-            t['txid'],
-            [i for i in t['vin']],
-            self._build_outputs(t),
-            False,
-            ""
-        ) for t in block['tx']]
+        vin=[]
+        transactions=[]
+        for t in block['tx']:
+            for i in t['vin']:
+                vin.append(self.rpc.getrawtransaction(i['txid'], 1))
+            transactions.append(WrapperTransaction(
+                t['txid'],
+                [[i['address'] for i in ii['vout']] for ii in vin],
+                self._build_outputs(t),
+                False,
+                ""
+            ))
 
         wb = WrapperBlock(
             block['hash'],
