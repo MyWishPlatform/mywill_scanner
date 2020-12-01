@@ -19,8 +19,11 @@ class MatNetwork(WrapperNetwork):
     def __init__(self, type):
         super().__init__(type)
         url = NETWORKS[type]['url']
+        url_reserve = NETWORKS[type]['url_reserve']
         self.web3 = Web3(Web3.HTTPProvider(url))
         self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        self.web3_reserve = Web3(Web3.HTTPProvider(url_reserve))
+        self.web3_reserve.middleware_onion.inject(geth_poa_middleware, layer=0)
         etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
         is_testnet = NETWORKS[type].get('is_testnet')
         self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
@@ -29,12 +32,20 @@ class MatNetwork(WrapperNetwork):
             self.web3.toChecksumAddress(t_address),
             abi=erc20_abi
         ) for t_name, t_address in ERC20_TOKENS.items()}
+        print(self.erc20_contracts_dict)
 
     def get_last_block(self):
-        return self.web3.eth.blockNumber
+        try:
+            return self.web3.eth.blockNumber
+        except Exception as e:
+            print(e)
+            return self.web3_reserve.eth.blockNumber
 
     def get_block(self, number: int) -> WrapperBlock:
-        block = self.web3.eth.getBlock(number, full_transactions=True)
+        try:
+            block = self.web3.eth.getBlock(number, full_transactions=True)
+        except:
+            block= self.web3_reserve.eth.getBlock(number, full_transactions=True)
         block = WrapperBlock(
             block['hash'].hex(),
             block['number'],
@@ -90,6 +101,11 @@ class MatNetwork(WrapperNetwork):
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
 
+    def get_ownership_transfer_receipt(self, tx_hash, token_name='default'):
+        tx_res = self.web3.eth.getTransactionReceipt(tx_hash)
+        processed = self.erc20_contracts_dict[token_name].events.OwnershipTransferred().processReceipt(tx_res)
+        print(processed)
+        return processed    
 
 class EtherScanAPI:
     """

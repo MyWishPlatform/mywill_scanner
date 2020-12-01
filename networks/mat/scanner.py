@@ -10,7 +10,7 @@ from scanner.services.scanner_polling import ScannerPolling
 class MatScanner(ScannerPolling):
 
     def process_block(self, block: WrapperBlock):
-        time.sleep(1.1)
+        time.sleep(1.5)
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:
@@ -25,6 +25,7 @@ class MatScanner(ScannerPolling):
         print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
         block_event = BlockEvent(self.network, block, address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
+        
 
     def _check_tx_from(self, tx, addresses):
         from_address = tx.inputs[0]
@@ -36,14 +37,18 @@ class MatScanner(ScannerPolling):
     def _check_tx_to(self, tx, address):
         to_address = tx.outputs[0]
         if to_address and to_address.address:
+            print('NO CREATION')
             address[to_address.address.lower()].append(tx)
         else:
+            print('go to creation')
             self._check_tx_creates(tx, address)
 
     def _check_tx_creates(self, tx, address):
         if not tx.contract_creation:
-            retur
+            return
+        print ('tx.contract_creation: {}'.format(tx.contract_creation))
         if tx.creates:
+            print('tx.creates: {}'.format(tx.creates))
             address[tx.creates.lower()].append(tx)
         else:
             try:
