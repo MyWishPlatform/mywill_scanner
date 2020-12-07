@@ -4,6 +4,7 @@ from eventscanner.monitors.payments import MatPaymentMonitor, ERC20PaymentMonito
 from eventscanner.monitors.contract.deploy import DeployMonitor
 from eventscanner.monitors.contract.ownership_transferred import OwnershipMonitor
 from eventscanner.monitors.contract.initialized import InitializedMonitor
+from eventscanner.monitors.contract.airdrop import AirdropMonitor
 
 
 pub.subscribe(MatPaymentMonitor.on_new_block_event, 'MATIC_MAINNET')
@@ -18,4 +19,5 @@ pub.subscribe(ERC20PaymentMonitor.on_new_block_event, 'MATIC_TESTNET')
 pub.subscribe(DeployMonitor.on_new_block_event, 'MATIC_TESTNET')
 pub.subscribe(OwnershipMonitor.on_new_block_event, 'MATIC_TESTNET')
 pub.subscribe(InitializedMonitor.on_new_block_event, 'MATIC_TESTNET')
+pub.subscribe(AirdropMonitor.on_new_block_event, 'MATIC_TESTNET')
 
