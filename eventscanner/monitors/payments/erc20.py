@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
+from mywish_models.models import ExchangeRequests, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS, ERC20_TOKENS
 
@@ -22,7 +22,7 @@ class ERC20PaymentMonitor:
             token_address = token_address.lower()
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
-                return cls.handle(token_address, token_name, transactions, block_event.network)
+                cls.handle(token_address, token_name, transactions, block_event.network)
 
     @classmethod
     def handle(cls, token_address: str, token_name, transactions, network):
@@ -31,19 +31,23 @@ class ERC20PaymentMonitor:
                 continue
 
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
+            if not processed_receipt:
+                print('{}: WARNING! Can`t handle tx {}, probably we dont support this event'.format(
+                    cls.network_types[0], tx.tx_hash), flush=True)
+                return
+
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
 
-            user_site_balance = session.query(UserSiteBalance).\
-                filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
-            if not user_site_balance:
-                return
+            model = session.query(ExchangeRequests).\
+                filter(ExchangeRequests.eth_address == transfer_to.lower()).first()
+            if not model:
+                continue
 
             message = {
-                "userId": user_site_balance.user_id,
-                "siteId": user_site_balance.subsite_id,
+                'exchangeId': model.id,
                 "transactionHash": tx.tx_hash,
-                "address": user_site_balance.eth_address,
+                "address": model.eth_address,
                 "amount": tokens_amount,
                 "currency": token_name,
                 "status": "COMMITTED",
