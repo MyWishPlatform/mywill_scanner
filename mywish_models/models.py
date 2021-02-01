@@ -10,4 +10,7 @@ Base.prepare(engine, reflect=True)
 
 UserSiteBalance = Base.classes.profile_usersitebalance
 
+AddressLock = Base.classes.deploy_deployaddress
+Network = Base.classes.deploy_network
+
 session = Session(engine)
