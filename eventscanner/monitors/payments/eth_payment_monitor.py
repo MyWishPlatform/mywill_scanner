@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import AdvUser, session
+from mywish_models.models import ExchangeRequests, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
@@ -23,7 +23,7 @@ class EthPaymentMonitor:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        query_result = session.query(AdvUser).filter(cls.address_from(AdvUser).in_(addresses)).all()
+        query_result = session.query(ExchangeRequests).filter(cls.address_from(ExchangeRequests).in_(addresses)).all()
         for model in query_result:
             address = cls.address_from(model)
             transactions = block_event.transactions_by_address[address.lower()]
@@ -41,7 +41,7 @@ class EthPaymentMonitor:
                 tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
 
                 message = {
-                    'userId': model.id,
+                    'exchangeId': model.id,
                     'address': address,
                     'transactionHash': transaction.tx_hash,
                     'currency': cls.currency,
@@ -51,3 +51,10 @@ class EthPaymentMonitor:
                 }
 
                 send_to_backend(cls.event_type, cls.queue, message)
+
+
+class DucxPaymentMonitor(EthPaymentMonitor):
+    network_types = ['DUCATUSX_MAINNET']
+    queue = NETWORKS[network_types[0]]['queue']
+
+    currency = 'DUCX'

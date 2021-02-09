@@ -10,7 +10,9 @@ from settings.settings_local import NETWORKS
 
 networks = {
     'ETHEREUM_MAINNET': EthMaker,
+    'DUCATUSX_MAINNET': EthMaker,
     'BTC_MAINNET': BTCMaker,
+    'DUCATUS_MAINNET': BTCMaker,
 
 }
 
