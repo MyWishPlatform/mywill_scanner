@@ -1,5 +1,5 @@
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import ExchangeRequests, session
+from mywish_models.models import AdvUser, session
 from scanner.events.block_event import BlockEvent
 from settings.settings_local import NETWORKS
 
@@ -23,8 +23,8 @@ class BTCPaymentMonitor:
 
         addresses = block_event.transactions_by_address.keys()
         query_result = session \
-            .query(ExchangeRequests) \
-            .filter(cls.address_from(ExchangeRequests).in_(addresses)) \
+            .query(AdvUser) \
+            .filter(cls.address_from(AdvUser).in_(addresses)) \
             .all()
         for model in query_result:
             address = cls.address_from(model)
@@ -38,7 +38,7 @@ class BTCPaymentMonitor:
                         continue
 
                     message = {
-                        'exchangeId': model.id,
+                        'userId': model.id,
                         'address': address,
                         'transactionHash': transaction.tx_hash,
                         'currency': cls.currency,
@@ -48,10 +48,3 @@ class BTCPaymentMonitor:
                     }
 
                     send_to_backend(cls.event_type, cls.queue, message)
-
-
-class DucPaymentMonitor(BTCPaymentMonitor):
-    network_types = ['DUCATUS_MAINNET']
-    queue = NETWORKS[network_types[0]]['queue']
-
-    currency = 'DUC'
