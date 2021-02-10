@@ -24,6 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.lock
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -123,7 +124,7 @@ settings_local.py
 gunicorn.conf.py
 db.sqlite3
 .vscode/
-settings/
+ETHEREUM_MAINNET
 
 
 # ignore local configs

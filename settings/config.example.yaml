@@ -5,9 +5,14 @@ networks:
     commitment_chain_length: 5
     queue: 'name'
 
+monitors:
+  MONITOR_NAME:
+    method: METHOD_NAME
+    networks:
+      - NETWORK_NAME
+
 erc20_tokens:
   TTT: '0x0123456789abcdefABCDEF000000000000000000'
-
 
 decimal_degree:
   BTC: 8

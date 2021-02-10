@@ -2,12 +2,12 @@ import os
 
 import yaml
 
-config = {}
+CONFIG = {}
 
 
 def from_file(file_obj):
-    config.update(yaml.load(file_obj))
+    CONFIG.update(yaml.load(file_obj))
 
 
-if not config:
+if not CONFIG:
     from_file(open(os.environ['CONFIG']))
