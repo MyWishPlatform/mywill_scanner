@@ -1,5 +1,4 @@
 from scanner.services.last_block_persister import LastBlockPersister
-
 from .network import EthNetwork
 from .scanner import EthScanner
 

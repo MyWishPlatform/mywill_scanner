@@ -4,6 +4,10 @@ networks:
     polling_interval: 10
     commitment_chain_length: 5
     queue: 'name'
+    scanner_makers:
+      - FIRST_SCANNER_MAKER_NAME
+      - SECOND_SCANNER_MAKER_NAME
+
 
 erc20_tokens:
   TTT: '0x0123456789abcdefABCDEF000000000000000000'
