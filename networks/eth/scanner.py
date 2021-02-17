@@ -1,9 +1,15 @@
 import collections
+from web3 import Web3
+from web3.exceptions import LogTopicError
 
-from blockchain_common.wrapper_block import WrapperBlock
+from settings import WEB3_URL
 from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
+from blockchain_common.wrapper_block import WrapperBlock
 from scanner.services.scanner_polling import ScannerPolling
+from blockchain_common.eth_tokens import abi_airdrop, token_abi
+
+web3 = Web3(Web3.HTTPProvider(WEB3_URL))
 
 
 class EthScanner(ScannerPolling):
@@ -21,7 +27,9 @@ class EthScanner(ScannerPolling):
             self._check_tx_to(transaction, address_transactions)
 
         print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
-        block_event = BlockEvent(self.network, block, address_transactions)
+
+        events = self._find_event(block)
+        block_event = BlockEvent(self.network, block=block, events=events, transactions=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
     def _check_tx_from(self, tx, addresses):
@@ -53,3 +61,22 @@ class EthScanner(ScannerPolling):
                                                                             tx.tx_hash))
                 print('{}: Empty to and creates field for transaction {}. Skip it.'.format(self.network.type,
                                                                                            tx.tx_hash))
+
+    def _find_event(self, block: WrapperBlock) -> dict:
+        find_events = {}
+        events = {
+            "OwnershipTransferred": abi_airdrop,
+            "MintFinished": token_abi,
+            "Initialized": token_abi,
+        }
+        for event, abi in events.items():
+            try:
+                contract = web3.eth.contract(abi=abi)
+                event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number, toBlock=block.number)
+                entries = event_filter.get_all_entries()
+                if entries:
+                    find_events[event] = entries
+            except LogTopicError as err:
+                print(str(err))
+
+        return find_events

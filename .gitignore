@@ -129,5 +129,6 @@ ETHEREUM_MAINNET
 
 # ignore local configs
 /*config*.yaml
+settings/config.yaml
 # except example
 !config.example.yaml
