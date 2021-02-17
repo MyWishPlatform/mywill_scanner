@@ -1,16 +1,16 @@
 from eventscanner.queue.pika_handler import send_to_backend
 from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
-from settings.settings_local import NETWORKS, ERC20_TOKENS
+from settings import CONFIG
 
 
 class ERC20PaymentMonitor:
 
     network_types = ['ETHEREUM_MAINNET']
     event_type = 'payment'
-    queue = NETWORKS[network_types[0]]['queue']
+    queue = CONFIG['networks'][network_types[0]]['queue']
 
-    tokens = ERC20_TOKENS
+    tokens = CONFIG['erc20_tokens']
 
     @classmethod
     def on_new_block_event(cls, block_event: BlockEvent):

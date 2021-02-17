@@ -5,7 +5,7 @@ import threading
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from config import config
+from settings import CONFIG
 from networks import scanner_makers
 
 
@@ -20,7 +20,7 @@ class ScanEntrypoint(threading.Thread):
 
 
 if __name__ == '__main__':
-    for net_name, net_conf in config['networks'].items():
+    for net_name, net_conf in CONFIG['networks'].items():
         maker_names = net_conf['scanner_makers']
         for maker_name in maker_names:
             maker = scanner_makers[maker_name]

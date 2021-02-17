@@ -1,13 +1,13 @@
 from pubsub import pub
 
-from settings import CONFIG, MONITORS
+from settings import CONFIG
+from .. import monitors
 
-for monitor in CONFIG["monitors"].items():
-    name = monitor[0]
-
-    if name in MONITORS:
-        method = monitor[1].get("method", None)
-        networks = monitor[1]["networks"]
+for name, monitor_config in CONFIG["monitors"].items():
+    monitor = getattr(monitors, name, None)
+    if monitor:
+        method = monitor_config.get("method", None)
+        networks = monitor_config["networks"]
 
         for network in networks:
-            pub.subscribe(MONITORS[name].on_new_block_event, network)
+            pub.subscribe(monitor.on_new_block_event, network)

@@ -6,20 +6,20 @@ from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_output import WrapperOutput
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
-from settings.settings_local import NETWORKS, ERC20_TOKENS
+from settings import CONFIG
 
 
 class EthNetwork(WrapperNetwork):
 
     def __init__(self, type):
         super().__init__(type)
-        url = NETWORKS[type]['url']
+        url = CONFIG['networks'][type]['url']
         self.w3_interface = Web3(Web3.HTTPProvider(url))
 
         self.erc20_contracts_dict = {t_name: self.w3_interface.eth.contract(
             self.w3_interface.toChecksumAddress(t_address),
             abi=erc20_abi
-        ) for t_name, t_address in ERC20_TOKENS.items()}
+        ) for t_name, t_address in CONFIG['erc20_tokens'].items()}
 
     def get_last_block(self):
         return self.w3_interface.eth.blockNumber
