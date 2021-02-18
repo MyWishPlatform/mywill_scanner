@@ -2,7 +2,7 @@ import pika
 import json
 
 
-def send_to_backend(type, queue, message):
+def send_to_backend(type: str, queue: str, message: dict):
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         'localhost',
         5672,

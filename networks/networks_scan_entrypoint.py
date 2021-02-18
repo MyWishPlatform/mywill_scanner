@@ -19,11 +19,15 @@ class ScanEntrypoint(threading.Thread):
         self.network.scanner.poller()
 
 
-if __name__ == '__main__':
-    for net_name, net_conf in CONFIG['networks'].items():
-        maker_names = net_conf['scanner_makers']
+if __name__ == "__main__":
+    for net_name, net_conf in CONFIG["networks"].items():
+        maker_names = net_conf["scanner_makers"]
         for maker_name in maker_names:
             maker = scanner_makers[maker_name]
-            scan = ScanEntrypoint(net_name, maker, net_conf['polling_interval'],
-                                  net_conf['commitment_chain_length'])
+            scan = ScanEntrypoint(
+                net_name,
+                maker,
+                net_conf["polling_interval"],
+                net_conf["commitment_chain_length"],
+            )
             scan.start()
