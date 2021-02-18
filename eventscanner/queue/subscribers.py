@@ -1,6 +1,13 @@
 from pubsub import pub
 
-from eventscanner.monitors.payments import EthPaymentMonitor, ERC20PaymentMonitor
+from settings import CONFIG
+from .. import monitors
 
-pub.subscribe(EthPaymentMonitor.on_new_block_event, 'ETHEREUM_MAINNET')
-pub.subscribe(ERC20PaymentMonitor.on_new_block_event, 'ETHEREUM_MAINNET')
+for name, monitor_config in CONFIG["monitors"].items():
+    monitor = getattr(monitors, name, None)
+    if monitor:
+        method = monitor_config.get("method", None)
+        networks = monitor_config["networks"]
+
+        for network in networks:
+            pub.subscribe(monitor.on_new_block_event, network)

@@ -1,0 +1,40 @@
+# Config for connecting to blockchain networks
+networks:
+  NETWORK_NAME:
+    url: 'https://127.0.0.1:5000'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: 'name'
+    scanner_makers:
+      - FIRST_SCANNER_MAKER_NAME
+      - SECOND_SCANNER_MAKER_NAME
+  ETHEREUM_ROPSTEN: # Example with eth network
+    url: 'https://ropsten.infura.io/v3/<id>'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: notification-ethereum
+    scanner_makers:
+      - EthMaker
+  # After this will be placed unique keys for specific networks
+  ETHEREUM:
+    etherscan_api_key: 'key_string' # etherscan key to obtain parsed logs
+
+# All monitors, witch should listen for specific network events
+# One monitor can listen to multiple networks
+monitors:
+  MONITOR_NAME:
+    method: METHOD_NAME
+    networks:
+      - NETWORK_NAME
+  # Example monitor to work with ethereum
+  EthPaymentMonitor:
+    method: new
+    networks:
+      - ETHEREUM_MAINNET
+
+# ERC20 tokens, in witch we should approve payments
+erc20_tokens:
+  TOKEN: '0x0000000000000000000000000000000000000000'
+
+db:
+  url: 'postgresql://user:pass@host:port/db_name'

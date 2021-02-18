@@ -24,6 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.lock
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -124,3 +125,9 @@ gunicorn.conf.py
 db.sqlite3
 .vscode/
 settings/
+
+
+# ignore local configs
+/*config*.yaml
+# except example
+!config.example.yaml
