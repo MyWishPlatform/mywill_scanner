@@ -2,14 +2,14 @@ import collections
 from web3 import Web3
 from web3.exceptions import LogTopicError
 
-from settings import WEB3_URL
+from settings import CONFIG
 from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
 from blockchain_common.wrapper_block import WrapperBlock
 from scanner.services.scanner_polling import ScannerPolling
 from blockchain_common.eth_tokens import abi_airdrop, token_abi
 
-web3 = Web3(Web3.HTTPProvider(WEB3_URL))
+web3 = Web3(Web3.HTTPProvider(CONFIG["networks"]["ETHEREUM_MAINNET"]["url"]))
 
 
 class EthScanner(ScannerPolling):
