@@ -124,11 +124,10 @@ settings_local.py
 gunicorn.conf.py
 db.sqlite3
 .vscode/
-ETHEREUM_MAINNET
+settings/
 
 
 # ignore local configs
-/*config*.yaml
-settings/config.yaml
+*config*.yaml
 # except example
 !config.example.yaml
