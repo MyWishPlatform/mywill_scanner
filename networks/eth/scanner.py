@@ -29,7 +29,7 @@ class EthScanner(ScannerPolling):
         print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
 
         events = self._find_event(block)
-        block_event = BlockEvent(self.network, block=block, events=events, transactions=address_transactions)
+        block_event = BlockEvent(self.network, block=block, events=events, transactions_by_address=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
     def _check_tx_from(self, tx, addresses):
