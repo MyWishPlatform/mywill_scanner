@@ -1,15 +1,11 @@
 import collections
-from web3 import Web3
 from web3.exceptions import LogTopicError
 
-from settings import CONFIG
 from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
 from blockchain_common.wrapper_block import WrapperBlock
 from scanner.services.scanner_polling import ScannerPolling
 from blockchain_common.eth_tokens import abi_airdrop, token_abi
-
-web3 = Web3(Web3.HTTPProvider(CONFIG["networks"]["ETHEREUM_MAINNET"]["url"]))
 
 
 class EthScanner(ScannerPolling):
@@ -71,7 +67,7 @@ class EthScanner(ScannerPolling):
         }
         for event, abi in events.items():
             try:
-                contract = web3.eth.contract(abi=abi)
+                contract = self.network.web3.eth.contract(abi=abi)
                 event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number, toBlock=block.number)
                 entries = event_filter.get_all_entries()
                 if entries:
