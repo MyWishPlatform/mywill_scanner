@@ -23,12 +23,12 @@ networks:
 # One monitor can listen to multiple networks
 monitors:
   MONITOR_NAME:
-    method: METHOD_NAME
+    # Different monitor instances for each net will be created
     networks:
-      - NETWORK_NAME
+      - NETWORK_NAME_FIRST
+      - NETWORK_NAME_SECOND
   # Example monitor to work with ethereum
   EthPaymentMonitor:
-    method: new
     networks:
       - ETHEREUM_MAINNET
 
