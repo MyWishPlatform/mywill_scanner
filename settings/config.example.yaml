@@ -5,6 +5,9 @@ networks:
     polling_interval: 10
     commitment_chain_length: 5
     queue: 'name'
+    # This parameter required for all non-eth chains, witch use EthScanner as base.
+    # False by default. For example, used in BSC and Matic.
+    remove_middleware: True
     scanner_makers:
       - FIRST_SCANNER_MAKER_NAME
       - SECOND_SCANNER_MAKER_NAME
@@ -17,7 +20,10 @@ networks:
       - EthMaker
   # After this will be placed unique keys for specific networks
   ETHEREUM:
-    etherscan_api_key: 'key_string' # etherscan key to obtain parsed logs
+    # etherscan key to obtain parsed logs
+    etherscan_api_key: 'key_string'
+  BINANCE:
+    remove_middleware: True
 
 # All monitors, witch should listen for specific network events
 # One monitor can listen to multiple networks
