@@ -2,30 +2,25 @@ from eventscanner.queue.pika_handler import send_to_backend
 from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
 from settings import CONFIG
+from blockchain_common.base_monitor import BaseMonitor
 
 
-class ERC20PaymentMonitor:
-
-    network_types = ['ETHEREUM_MAINNET']
+class ERC20PaymentMonitor(BaseMonitor):
     event_type = 'payment'
-    queue = CONFIG['networks'][network_types[0]]['queue']
-
     tokens = CONFIG['erc20_tokens']
 
-    @classmethod
-    def on_new_block_event(cls, block_event: BlockEvent):
-        if block_event.network.type not in cls.network_types:
+    def on_new_block_event(self, block_event: BlockEvent):
+        if block_event.network.type != self.network_type:
             return
 
         addresses = block_event.transactions_by_address.keys()
-        for token_name, token_address in cls.tokens.items():
+        for token_name, token_address in self.tokens.items():
             token_address = token_address.lower()
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
-                return cls.handle(token_address, token_name, transactions, block_event.network)
+                return self.handle(token_address, token_name, transactions, block_event.network)
 
-    @classmethod
-    def handle(cls, token_address: str, token_name, transactions, network):
+    def handle(self, token_address: str, token_name, transactions, network):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
                 continue
@@ -37,7 +32,7 @@ class ERC20PaymentMonitor:
             user_site_balance = session.query(UserSiteBalance).\
                 filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
             if not user_site_balance:
-                return
+                continue
 
             message = {
                 "userId": user_site_balance.user_id,
@@ -50,4 +45,4 @@ class ERC20PaymentMonitor:
                 "success": True
             }
 
-            send_to_backend(cls.event_type, cls.queue, message)
+            send_to_backend(self.event_type, self.queue, message)

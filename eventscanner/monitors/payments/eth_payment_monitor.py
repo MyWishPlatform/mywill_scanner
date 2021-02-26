@@ -1,18 +1,14 @@
+from blockchain_common.base_monitor import BaseMonitor
 from eventscanner.queue.pika_handler import send_to_backend
 from mywish_models.models import UserSiteBalance, session
 from scanner.events.block_event import BlockEvent
-from settings import CONFIG
 
 
-class EthPaymentMonitor:
-
-    network_types = ['ETHEREUM_MAINNET']
+class EthPaymentMonitor(BaseMonitor):
     event_type = 'payment'
-    queue = CONFIG['networks'][network_types[0]]['queue']
 
-    @classmethod
-    def on_new_block_event(cls, block_event: BlockEvent):
-        if block_event.network.type not in cls.network_types:
+    def on_new_block_event(self, block_event: BlockEvent):
+        if block_event.network.type != self.network_type:
             return
 
         addresses = block_event.transactions_by_address.keys()
@@ -42,4 +38,4 @@ class EthPaymentMonitor:
                     'status': 'COMMITTED'
                 }
 
-                send_to_backend(cls.event_type, cls.queue, message)
+                send_to_backend(self.event_type, self.queue, message)
