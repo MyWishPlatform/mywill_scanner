@@ -14,40 +14,32 @@ class AirdropMonitor:
     def on_new_block_event(cls, block_event: BlockEvent):
         if block_event.network.type not in cls.network_types:
             return
+        return
 
-        print(block_event.__dict__)
-
-        '''
-        to_addresses = {}
+        to_addresses = dict()
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
                 to_addresses[transaction.outputs[0].address] = transaction
 
-        to_addresses = to_addresses
-        contracts = []
-        contracts = session.query(ETHContract, Contract, Network) \
+        eth_contracts = session.query(ETHContract, Contract, Network) \
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id) \
             .filter(ETHContract.address.in_(to_addresses.keys())) \
             .filter(Network.name == block_event.network.type).all()
 
-        for contract in contracts:
+        for contract in eth_contracts:
             transaction: WrapperTransaction = to_addresses[contract[0].address]
             tx_receipt = block_event.network.get_ownership_transfer_receipt(transaction.tx_hash)
-            print(tx_receipt[0])
-            print(tx_receipt[0]['args']['newOwner'], contract[0].address)
-            if tx_receipt[0][
-                'event'] != 'OwnershipTransferred':  # or tx_receipt[0]['args']['newOwner']!=contract[0].address:
+
+            if tx_receipt[0]['event'] != 'Airdrop':
                 continue
 
             message = {
                 'contractId': contract[0].id,
-                'crowdsaleId': contract[0].id,
-                'transactionHash': transaction.tx_hash,
-                'new owner': tx_receipt[0]['args']['newOwner'],
-                'address': transaction.creates,
-                'success': True,
-                'status': 'COMMITTED'
+                'status': 'COMMITTED',
+                'airdroppedAddresses': None
             }
 
+            print("AIRDROP AAAAAAA", transaction.tx_hash)
+            print("AIRDROP BBBBBBB", transaction.creates)
+
             send_to_backend(cls.event_type, NETWORKS[block_event.network.type]['queue'], message)
-        '''

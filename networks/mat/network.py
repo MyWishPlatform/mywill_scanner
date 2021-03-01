@@ -105,7 +105,8 @@ class MatNetwork(WrapperNetwork):
         tx_res = self.web3.eth.getTransactionReceipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.OwnershipTransferred().processReceipt(tx_res)
         print(processed)
-        return processed    
+        return processed
+
 
 class EtherScanAPI:
     """

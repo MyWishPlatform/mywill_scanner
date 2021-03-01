@@ -18,21 +18,18 @@ class InitializedMonitor:
         to_addresses = {}
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
-                    to_addresses[transaction.outputs[0].address] = transaction
+                to_addresses[transaction.outputs[0].address] = transaction
 
-        to_addresses = to_addresses
-        contracts=[]
         contracts = session.query(ETHContract, Contract, Network)\
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
             .filter(ETHContract.address.in_(to_addresses.keys()))\
             .filter(Network.name == block_event.network.type).all()
 
         for contract in contracts:
-            #transaction: WrapperTransaction = to_addresses[contract[0].address]
-            #tx_receipt = block_event.network.get_ownership_transfer_receipt(transaction.tx_hash)
-            if transaction.outputs[0].raw_output_script!='0xe1c7392a':
-                continue
+            transaction: WrapperTransaction = to_addresses[contract[0].address]
 
+            if transaction.outputs[0].raw_output_script != '0xe1c7392a':
+                continue
 
             message = {
                 'contractId': contract[0].id,

@@ -25,7 +25,6 @@ class MatScanner(ScannerPolling):
         print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
         block_event = BlockEvent(self.network, block, address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
-        
 
     def _check_tx_from(self, tx, addresses):
         from_address = tx.inputs[0]

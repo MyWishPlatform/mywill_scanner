@@ -1,5 +1,5 @@
 from scanner.events.block_event import BlockEvent
-from mywish_models.models import ETHContract, Contract, Network, session, CrowdsaleContract
+from mywish_models.models import ETHContract, Contract, Network, session
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from eventscanner.queue.pika_handler import send_to_backend
 
@@ -21,15 +21,13 @@ class DeployMonitor:
                 if transaction.contract_creation:
                     deploy_hashes[transaction.tx_hash.lower()] = transaction
 
-        deploy_hashes = deploy_hashes
-        contracts=[]
-        contracts = session.query(ETHContract, Contract, Network)\
+        eth_contracts = session.query(ETHContract, Contract, Network)\
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
             .filter(ETHContract.tx_hash.in_(deploy_hashes.keys()))\
             .filter(Network.name == block_event.network.type).all()
 
-        for contract in contracts:
-            print(contract[0].id, contract[0].tx_hash)
+        for contract in eth_contracts:
+            print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
             transaction: WrapperTransaction = deploy_hashes[contract[0].tx_hash]
             tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
 
