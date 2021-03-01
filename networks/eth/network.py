@@ -19,13 +19,18 @@ class EthNetwork(WrapperNetwork):
     def __init__(self, type):
         super().__init__(type)
         config = CONFIG['networks'][type]
+
         urls = config['url']
+        # Old config support
+        if not isinstance(urls, list):
+            urls = [urls]
         for url in urls:
             rpc = Web3(Web3.HTTPProvider(url))
             # Disable ethereum special checks, if network used for non-eth chain
             if config.get('remove_middleware'):
                 rpc.middleware_onion.inject(geth_poa_middleware, layer=0)
             self.add_rpc(rpc)
+
         etherscan_api_key = CONFIG['networks'][type].get('etherscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
         self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)

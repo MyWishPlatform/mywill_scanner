@@ -1,7 +1,10 @@
 # Config for connecting to blockchain networks
 networks:
   NETWORK_NAME:
-    url: 'https://127.0.0.1:5000'
+    # Support multiple urls and allow to split up requests between them
+    url:
+    - 'https://127.0.0.1:5000'
+    - 'https://127.0.0.1:5001'
     polling_interval: 10
     commitment_chain_length: 5
     queue: 'name'
@@ -22,6 +25,8 @@ networks:
   ETHEREUM:
     # etherscan key to obtain parsed logs
     etherscan_api_key: 'key_string'
+    # If true, etherscan will do ropsten requests instead of mainnet
+    is_testnet: False
   BINANCE:
     remove_middleware: True
 
