@@ -1,5 +1,3 @@
-import typing
-
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
 
