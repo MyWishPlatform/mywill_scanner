@@ -1,16 +1,16 @@
 import collections
-import time
+from web3.exceptions import LogTopicError
 
-from blockchain_common.wrapper_block import WrapperBlock
 from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
+from blockchain_common.wrapper_block import WrapperBlock
 from scanner.services.scanner_polling import ScannerPolling
+from blockchain_common.eth_tokens import abi_airdrop, token_abi
 
 
-class MatScanner(ScannerPolling):
+class EthScanner(ScannerPolling):
 
     def process_block(self, block: WrapperBlock):
-        time.sleep(1.5)
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:
@@ -22,8 +22,8 @@ class MatScanner(ScannerPolling):
             self._check_tx_from(transaction, address_transactions)
             self._check_tx_to(transaction, address_transactions)
 
-        print('{}: transactions'.format(self.network.type), address_transactions, flush=True)
-        block_event = BlockEvent(self.network, block, address_transactions)
+        events = self._find_event(block)
+        block_event = BlockEvent(self.network, block=block, events=events, transactions_by_address=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
     def _check_tx_from(self, tx, addresses):
@@ -36,18 +36,14 @@ class MatScanner(ScannerPolling):
     def _check_tx_to(self, tx, address):
         to_address = tx.outputs[0]
         if to_address and to_address.address:
-            print('NO CREATION')
             address[to_address.address.lower()].append(tx)
         else:
-            print('go to creation')
             self._check_tx_creates(tx, address)
 
     def _check_tx_creates(self, tx, address):
         if not tx.contract_creation:
             return
-        print ('tx.contract_creation: {}'.format(tx.contract_creation))
         if tx.creates:
-            print('tx.creates: {}'.format(tx.creates))
             address[tx.creates.lower()].append(tx)
         else:
             try:
@@ -65,3 +61,22 @@ class MatScanner(ScannerPolling):
                                                                             tx.tx_hash))
                 print('{}: Empty to and creates field for transaction {}. Skip it.'.format(self.network.type,
                                                                                            tx.tx_hash))
+
+    def _find_event(self, block: WrapperBlock) -> dict:
+        find_events = {}
+        events = {
+            "OwnershipTransferred": abi_airdrop,
+            "MintFinished": token_abi,
+            "Initialized": token_abi,
+        }
+        for event, abi in events.items():
+            try:
+                contract = self.network.web3.eth.contract(abi=abi)
+                event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number, toBlock=block.number)
+                entries = event_filter.get_all_entries()
+                if entries:
+                    find_events[event] = entries
+            except LogTopicError as err:
+                print(str(err))
+
+        return find_events

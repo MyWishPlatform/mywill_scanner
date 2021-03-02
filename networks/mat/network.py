@@ -11,41 +11,40 @@ from blockchain_common.wrapper_network import WrapperNetwork
 from blockchain_common.wrapper_output import WrapperOutput
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
-from settings.settings_local import NETWORKS, ERC20_TOKENS
+from settings import CONFIG
 
 
-class MatNetwork(WrapperNetwork):
+class EthNetwork(WrapperNetwork):
 
     def __init__(self, type):
         super().__init__(type)
-        url = NETWORKS[type]['url']
-        url_reserve = NETWORKS[type]['url_reserve']
-        self.web3 = Web3(Web3.HTTPProvider(url))
-        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.web3_reserve = Web3(Web3.HTTPProvider(url_reserve))
-        self.web3_reserve.middleware_onion.inject(geth_poa_middleware, layer=0)
-        etherscan_api_key = NETWORKS[type].get('etherscan_api_key')
-        is_testnet = NETWORKS[type].get('is_testnet')
+        config = CONFIG['networks'][type]
+
+        urls = config['url']
+        # Old config support
+        if not isinstance(urls, list):
+            urls = [urls]
+        for url in urls:
+            rpc = Web3(Web3.HTTPProvider(url))
+            # Disable ethereum special checks, if network used for non-eth chain
+            if config.get('remove_middleware'):
+                rpc.middleware_onion.inject(geth_poa_middleware, layer=0)
+            self.add_rpc(rpc)
+
+        etherscan_api_key = CONFIG['networks'][type].get('etherscan_api_key')
+        is_testnet = CONFIG['networks'][type].get('is_testnet')
         self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
 
-        self.erc20_contracts_dict = {t_name: self.web3.eth.contract(
-            self.web3.toChecksumAddress(t_address),
+        self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
+            self.rpc.toChecksumAddress(t_address),
             abi=erc20_abi
-        ) for t_name, t_address in ERC20_TOKENS.items()}
-        print(self.erc20_contracts_dict)
+        ) for t_name, t_address in CONFIG['erc20_tokens'].items()}
 
     def get_last_block(self):
-        try:
-            return self.web3.eth.blockNumber
-        except Exception as e:
-            print(e)
-            return self.web3_reserve.eth.blockNumber
+        return self.rpc.eth.blockNumber
 
     def get_block(self, number: int) -> WrapperBlock:
-        try:
-            block = self.web3.eth.getBlock(number, full_transactions=True)
-        except:
-            block= self.web3_reserve.eth.getBlock(number, full_transactions=True)
+        block = self.rpc.eth.getBlock(number, full_transactions=True)
         block = WrapperBlock(
             block['hash'].hex(),
             block['number'],
@@ -88,7 +87,7 @@ class MatNetwork(WrapperNetwork):
         return t
 
     def get_tx_receipt(self, hash):
-        tx_res = self.web3.eth.getTransactionReceipt(hash)
+        tx_res = self.rpc.eth.getTransactionReceipt(hash)
         return WrapperTransactionReceipt(
             tx_res['transactionHash'].hex(),
             tx_res['contractAddress'],
@@ -97,14 +96,8 @@ class MatNetwork(WrapperNetwork):
         )
 
     def get_processed_tx_receipt(self, tx_hash, token_name):
-        tx_res = self.web3.eth.getTransactionReceipt(tx_hash)
+        tx_res = self.rpc.eth.getTransactionReceipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
-        return processed
-
-    def get_ownership_transfer_receipt(self, tx_hash, token_name='default'):
-        tx_res = self.web3.eth.getTransactionReceipt(tx_hash)
-        processed = self.erc20_contracts_dict[token_name].events.OwnershipTransferred().processReceipt(tx_res)
-        print(processed)
         return processed
 
 
@@ -124,8 +117,8 @@ class EtherScanAPI:
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Geko/20100101 Firefox/69.0'}
 
     def __init__(self, api_key=None, testnet=False):
-        url_prefix = 'explorer-mumbai' if testnet else 'explorer-mainnet'
-        self.url = f'https://{url_prefix}.maticvigil.com/api'
+        url_prefix = 'api-ropsten' if testnet else 'api'
+        self.url = f'https://{url_prefix}.etherscan.io/api'
 
         if self._validate_api_key(api_key):
             self.api_key = api_key
@@ -192,21 +185,20 @@ class EtherScanAPI:
     def _get_internal_txs(self, block_number):
         params = {
             'module': 'account',
-            'action': 'balance',
+            'action': 'txlistinternal',
             'startblock': block_number,
             'endblock': block_number,
             'apikey': self.api_key
         }
-        print(params)
+
         r = requests.get(self.url, headers=self.headers, params=params)
-        print('response'.format(r))
         data = r.json()
-        print(data)
+
         if r.status_code == 200 and data['status'] == '1':
             txs = data.get('result')
             return txs
         else:
-            if data['message'] == 'Unknown action':
+            if data['message'] == 'No transactions found':
                 return []
             raise APILimitError(data['message'])
 

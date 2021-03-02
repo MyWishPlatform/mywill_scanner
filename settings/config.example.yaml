@@ -1,0 +1,51 @@
+# Config for connecting to blockchain networks
+networks:
+  NETWORK_NAME:
+    # Support multiple urls and allow to split up requests between them
+    url:
+    - 'https://127.0.0.1:5000'
+    - 'https://127.0.0.1:5001'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: 'name'
+    # This parameter required for all non-eth chains, witch use EthScanner as base.
+    # False by default. For example, used in BSC and Matic.
+    remove_middleware: True
+    scanner_makers:
+      - FIRST_SCANNER_MAKER_NAME
+      - SECOND_SCANNER_MAKER_NAME
+  ETHEREUM_ROPSTEN: # Example with eth network
+    url: 'https://ropsten.infura.io/v3/<id>'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: notification-ethereum
+    scanner_makers:
+      - EthMaker
+  # After this will be placed unique keys for specific networks
+  ETHEREUM:
+    # etherscan key to obtain parsed logs
+    etherscan_api_key: 'key_string'
+    # If true, etherscan will do ropsten requests instead of mainnet
+    is_testnet: False
+  BINANCE:
+    remove_middleware: True
+
+# All monitors, witch should listen for specific network events
+# One monitor can listen to multiple networks
+monitors:
+  MONITOR_NAME:
+    # Different monitor instances for each net will be created
+    networks:
+      - NETWORK_NAME_FIRST
+      - NETWORK_NAME_SECOND
+  # Example monitor to work with ethereum
+  EthPaymentMonitor:
+    networks:
+      - ETHEREUM_MAINNET
+
+# ERC20 tokens, in witch we should approve payments
+erc20_tokens:
+  TOKEN: '0x0000000000000000000000000000000000000000'
+
+db:
+  url: 'postgresql://user:pass@host:port/db_name'

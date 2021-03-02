@@ -1,17 +1,12 @@
-import threading
-import sys
 import os
+import sys
+import threading
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from networks import MatMaker
-from settings.settings_local import NETWORKS
-
-networks = {
-    'MATIC_MAINNET': MatMaker,
-    'MATIC_TESTNET': MatMaker,
-}
+from settings import CONFIG
+from networks import scanner_makers
 
 
 class ScanEntrypoint(threading.Thread):
@@ -24,8 +19,15 @@ class ScanEntrypoint(threading.Thread):
         self.network.scanner.poller()
 
 
-if __name__ == '__main__':
-    for network_name, network_maker in networks.items():
-        scan = ScanEntrypoint(network_name, network_maker, NETWORKS[network_name]['polling_interval'],
-                              NETWORKS[network_name]['commitment_chain_length'])
-        scan.start()
+if __name__ == "__main__":
+    for net_name, net_conf in CONFIG["networks"].items():
+        maker_names = net_conf["scanner_makers"]
+        for maker_name in maker_names:
+            maker = scanner_makers[maker_name]
+            scan = ScanEntrypoint(
+                net_name,
+                maker,
+                net_conf["polling_interval"],
+                net_conf["commitment_chain_length"],
+            )
+            scan.start()

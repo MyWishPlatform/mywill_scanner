@@ -1,23 +1,19 @@
 from pubsub import pub
 
-from eventscanner.monitors.payments import MatPaymentMonitor, ERC20PaymentMonitor
-from eventscanner.monitors.contract.deploy import DeployMonitor
-from eventscanner.monitors.contract.ownership_transferred import OwnershipMonitor
-from eventscanner.monitors.contract.initialized import InitializedMonitor
-from eventscanner.monitors.contract.airdrop import AirdropMonitor
+from settings import CONFIG
+from .. import monitors
 
+subscribe_list = []
+for name, monitor_config in CONFIG["monitors"].items():
+    monitor_class = getattr(monitors, name, None)
+    if monitor_class:
+        networks = monitor_config["networks"]
 
-pub.subscribe(MatPaymentMonitor.on_new_block_event, 'MATIC_MAINNET')
-pub.subscribe(ERC20PaymentMonitor.on_new_block_event, 'MATIC_MAINNET')
-pub.subscribe(DeployMonitor.on_new_block_event, 'MATIC_MAINNET')
-pub.subscribe(OwnershipMonitor.on_new_block_event, 'MATIC_MAINNET')
-pub.subscribe(InitializedMonitor.on_new_block_event, 'MATIC_MAINNET')
+        for network in networks:
+            monitor = monitor_class(network)
+            subscribe_list.append((monitor.on_new_block_event, network))
 
-
-pub.subscribe(MatPaymentMonitor.on_new_block_event, 'MATIC_TESTNET')
-pub.subscribe(ERC20PaymentMonitor.on_new_block_event, 'MATIC_TESTNET')
-pub.subscribe(DeployMonitor.on_new_block_event, 'MATIC_TESTNET')
-pub.subscribe(OwnershipMonitor.on_new_block_event, 'MATIC_TESTNET')
-pub.subscribe(InitializedMonitor.on_new_block_event, 'MATIC_TESTNET')
-pub.subscribe(AirdropMonitor.on_new_block_event, 'MATIC_TESTNET')
-
+# pubsub lib do not remember variables, created inside loop.
+# So, we create list of variables in one loop, and then push it to pubsub
+for elem in subscribe_list:
+    pub.subscribe(*elem)
