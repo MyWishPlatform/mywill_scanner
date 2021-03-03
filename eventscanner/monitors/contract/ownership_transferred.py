@@ -28,9 +28,9 @@ class OwnershipMonitor(BaseMonitor):
         for contract in eth_contracts:
             transaction: WrapperTransaction = to_addresses[contract[0].address]
 
-            crowdsale_contract = block_event.network.web3.eth.contract(abi=token_abi)
-            tx_res = block_event.network.web3.eth.getTransactionReceipt(transaction.tx_hash)
-            tx_receipt = crowdsale_contract.events.OwnershipTransferred().processReceipt(tx_res)
+            con = block_event.network.rpc.eth.contract(abi=token_abi)
+            tx_res = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
+            tx_receipt = con.events.OwnershipTransferred().processReceipt(tx_res)
 
             print(tx_receipt[0])
             print(tx_receipt[0]['args']['newOwner'],  contract[0].address)

@@ -5,7 +5,7 @@ from eventscanner.queue.subscribers import pub
 from scanner.events.block_event import BlockEvent
 from blockchain_common.wrapper_block import WrapperBlock
 from scanner.services.scanner_polling import ScannerPolling
-from blockchain_common.eth_tokens import abi_airdrop, token_abi
+from blockchain_common.eth_tokens import token_abi
 
 
 class EthScanner(ScannerPolling):
@@ -22,8 +22,9 @@ class EthScanner(ScannerPolling):
             self._check_tx_from(transaction, address_transactions)
             self._check_tx_to(transaction, address_transactions)
 
-        events = self._find_event(block)
-        block_event = BlockEvent(self.network, block=block, events=events, transactions_by_address=address_transactions)
+        # in developing
+        # events = self._find_event(block)
+        block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
     def _check_tx_from(self, tx, addresses):
@@ -65,13 +66,13 @@ class EthScanner(ScannerPolling):
     def _find_event(self, block: WrapperBlock) -> dict:
         find_events = {}
         events = {
-            "OwnershipTransferred": abi_airdrop,
+            "OwnershipTransferred": token_abi,
             "MintFinished": token_abi,
             "Initialized": token_abi,
         }
         for event, abi in events.items():
             try:
-                contract = self.network.web3.eth.contract(abi=abi)
+                contract = self.network.rpc.eth.contract(abi=abi)
                 event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number, toBlock=block.number)
                 entries = event_filter.get_all_entries()
                 if entries:
