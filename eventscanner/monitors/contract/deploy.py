@@ -2,17 +2,16 @@ from scanner.events.block_event import BlockEvent
 from mywish_models.models import ETHContract, Contract, Network, session
 from blockchain_common.wrapper_transaction import WrapperTransaction
 from eventscanner.queue.pika_handler import send_to_backend
+from blockchain_common.base_monitor import BaseMonitor
 
 from settings.settings_local import NETWORKS
 
 
-class DeployMonitor:
-    network_types = ['MATIC_MAINNET', 'MATIC_TESTNET']
+class DeployMonitor(BaseMonitor):
     event_type = 'deployed'
 
-    @classmethod
-    def on_new_block_event(cls, block_event: BlockEvent):
-        if block_event.network.type not in cls.network_types:
+    def on_new_block_event(self, block_event: BlockEvent):
+        if block_event.network.type != self.network_type:
             return
 
         deploy_hashes = {}
@@ -39,4 +38,4 @@ class DeployMonitor:
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(cls.event_type, NETWORKS[block_event.network.type]['queue'], message)
+            send_to_backend(self.event_type, NETWORKS[block_event.network.type]['queue'], message)
