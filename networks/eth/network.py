@@ -33,7 +33,7 @@ class EthNetwork(WrapperNetwork):
 
         etherscan_api_key = CONFIG['networks'][type].get('etherscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
-        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet)
+        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet) if etherscan_api_key else None
 
         self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
             self.rpc.toChecksumAddress(t_address),
@@ -52,9 +52,9 @@ class EthNetwork(WrapperNetwork):
             [self._build_transaction(t) for t in block['transactions']],
         )
 
-        internal_txs = [self._build_transaction(t)
-                        for t in self.etherscan.get_internal_txs(number)]
-        block.transactions += internal_txs
+        if self.etherscan:
+            internal_txs = [self._build_transaction(t) for t in self.etherscan.get_internal_txs(number)]
+            block.transactions += internal_txs
 
         return block
 
@@ -72,6 +72,8 @@ class EthNetwork(WrapperNetwork):
             tx['input']
         )
 
+        # Field 'to' is empty when tx creates contract
+        contract_creation = tx['to'] is None
         tx_creates = tx.get('creates', None)
 
         # 'creates' is None when tx dont create any contract
@@ -79,7 +81,7 @@ class EthNetwork(WrapperNetwork):
             tx_hash,
             [tx['from']],
             [output],
-            bool(tx_creates),
+            contract_creation,
             tx_creates
         )
         return t
