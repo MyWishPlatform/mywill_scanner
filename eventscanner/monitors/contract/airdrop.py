@@ -32,7 +32,10 @@ class AirdropMonitor(BaseMonitor):
         to_addresses = {}
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
-                to_addresses[transaction.outputs[0].address.lower()] = transaction
+                address = transaction.outputs[0].address
+                if not address:
+                    continue
+                to_addresses[address.lower()] = transaction
 
         eth_contracts = (session.query(ETHContract, Contract, Network)
                          .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)
