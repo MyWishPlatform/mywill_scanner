@@ -5,8 +5,6 @@ from blockchain_common.wrapper_transaction import WrapperTransaction
 from mywish_models.models import ETHContract, Contract, Network, session
 from blockchain_common.base_monitor import BaseMonitor
 
-from settings.settings_local import NETWORKS
-
 
 class OwnershipMonitor(BaseMonitor):
     event_type = 'ownershipTransferred'
@@ -48,4 +46,4 @@ class OwnershipMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.event_type, NETWORKS[block_event.network.type]['queue'], message)
+            send_to_backend(self.event_type, self.queue, message)

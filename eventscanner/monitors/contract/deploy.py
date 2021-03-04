@@ -4,8 +4,6 @@ from blockchain_common.wrapper_transaction import WrapperTransaction
 from eventscanner.queue.pika_handler import send_to_backend
 from blockchain_common.base_monitor import BaseMonitor
 
-from settings.settings_local import NETWORKS
-
 
 class DeployMonitor(BaseMonitor):
     event_type = 'deployed'
@@ -38,4 +36,4 @@ class DeployMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.event_type, NETWORKS[block_event.network.type]['queue'], message)
+            send_to_backend(self.event_type, self.queue, message)
