@@ -1,0 +1,40 @@
+from enum import Enum
+
+
+class ContractTypes(Enum):
+    # Based on https://app.simplenote.com/p/cbglT1
+
+    LASTWILL = 0
+    LOSTKEY = 1
+    DELAYED_PAYMENT = 2
+    ICO = 4
+    TOKEN = 5
+    NEO_TOKEN = 6
+    NEO_ICO = 7
+    AIRDROP = 8
+    INVESTMENT_POOL = 9
+    EOS_TOKEN = 10
+    EOS_ACCOUNT = 11
+    EOS_ICO = 12
+    EOS_AIRDROP = 13
+    EOS_TOKEN_STANDALONE = 14
+    TRON_TOKEN = 15
+    TRON_GAME_ASSETS = 16
+    TRON_AIRDROP = 17
+    TRON_LOSTKEY = 18
+    LOSTKEY_FOR_TOKENS = 19
+    SWAPS = 20
+    SWAPS2 = 21
+    WAVES_STO = 22
+    TOKEN_PROTECTOR = 23
+    BINANCE_LASTWILL = 24
+    BINANCE_LOSTKEY = 25
+    BINANCE_DELAYED_PAYMENT = 26
+    BINANCE_ICO = 27
+    BINANCE_TOKEN = 28
+    BINANCE_AIRDROP = 29
+    BINANCE_INVESTMENT_POOL = 30
+    BINANCE_LOSTKEY_FOR_TOKENS = 31
+    MATIC_ICO = 32
+    MATIC_TOKEN = 33
+    MATIC_AIRDROP = 34
