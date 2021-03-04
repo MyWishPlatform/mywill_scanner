@@ -30,10 +30,7 @@ class OwnershipMonitor(BaseMonitor):
             tx_res = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
             tx_receipt = con.events.OwnershipTransferred().processReceipt(tx_res)
 
-            print(tx_receipt[0])
-            print(tx_receipt[0]['args']['newOwner'],  contract[0].address)
-
-            if tx_receipt[0]['event'] != 'OwnershipTransferred':
+            if not tx_receipt or tx_receipt[0]['event'] != 'OwnershipTransferred':
                 continue
 
             message = {
