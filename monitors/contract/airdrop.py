@@ -1,11 +1,10 @@
 from web3 import Web3
 from sqlalchemy import func
 
-from tokens import token_abi
-from settings import ContractTypes
 from base import BlockEvent, BaseMonitor, Transaction
 from models import ETHContract, Contract, Network, session
-from eventscanner.queue.pika_handler import send_to_backend
+from settings import ContractTypes
+from tokens import token_abi
 
 
 class AirdropMonitor(BaseMonitor):
@@ -57,4 +56,4 @@ class AirdropMonitor(BaseMonitor):
                     for i in processed_logs]
             }
 
-            send_to_backend(self.monitor_name, self.event_type, self.queue, message)
+            self.send_to_backend(message)

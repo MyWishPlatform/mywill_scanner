@@ -1,9 +1,9 @@
 import collections
+from pubsub import pub
 from web3.exceptions import LogTopicError
 
 from tokens import token_abi
 from base import Block, Scanner, BlockEvent
-from eventscanner.queue.subscribers import pub
 
 
 class EthScanner(Scanner):

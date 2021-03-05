@@ -1,6 +1,5 @@
 from base import BlockEvent, BaseMonitor, Transaction
 from models import ETHContract, Contract, Network, session
-from eventscanner.queue.pika_handler import send_to_backend
 
 
 class DeployMonitor(BaseMonitor):
@@ -31,4 +30,4 @@ class DeployMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.monitor_name, self.event_type, self.queue, message)
+            self.send_to_backend(message)

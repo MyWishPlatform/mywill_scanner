@@ -1,7 +1,28 @@
 import threading
 
-from settings import CONFIG
+from pubsub import pub
+
+import monitors
 from networks import scanner_makers
+from settings import CONFIG
+
+subscribe_list = []
+for name, monitor_config in CONFIG["monitors"].items():
+    monitor_class = getattr(monitors, name, None)
+    if monitor_class:
+        networks = monitor_config["networks"]
+
+        for network in networks:
+            monitor = monitor_class(network)
+            subscribe_list.append((monitor.process, network))
+    else:
+
+        raise ImportWarning(f'WARNING: Monitor {name} not found. Check config.yaml file.')
+
+# pubsub lib do not remember variables, created inside loop.
+# So, we create list of variables in one loop, and then push it to pubsub
+for elem in subscribe_list:
+    pub.subscribe(*elem)
 
 
 class ScanEntrypoint(threading.Thread):

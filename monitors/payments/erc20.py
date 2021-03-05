@@ -1,7 +1,6 @@
-from settings import CONFIG
 from base import BlockEvent, BaseMonitor
 from models import UserSiteBalance, session
-from eventscanner.queue.pika_handler import send_to_backend
+from settings import CONFIG
 
 
 class ERC20PaymentMonitor(BaseMonitor):
@@ -41,4 +40,4 @@ class ERC20PaymentMonitor(BaseMonitor):
                 "success": True
             }
 
-            send_to_backend(self.monitor_name, self.event_type, self.queue, message)
+            self.send_to_backend(message)
