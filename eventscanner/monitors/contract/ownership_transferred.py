@@ -1,18 +1,13 @@
-from scanner.events.block_event import BlockEvent
-from blockchain_common.eth_tokens import token_abi
+from tokens import token_abi
+from base import BlockEvent, BaseMonitor, Transaction
+from models import ETHContract, Contract, Network, session
 from eventscanner.queue.pika_handler import send_to_backend
-from blockchain_common.wrapper_transaction import WrapperTransaction
-from mywish_models.models import ETHContract, Contract, Network, session
-from blockchain_common.base_monitor import BaseMonitor
 
 
 class OwnershipMonitor(BaseMonitor):
     event_type = 'ownershipTransferred'
 
     def on_new_block_event(self, block_event: BlockEvent):
-        if block_event.network.type != self.network_type:
-            return
-
         to_addresses = {}
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
@@ -24,7 +19,7 @@ class OwnershipMonitor(BaseMonitor):
             .filter(Network.name == block_event.network.type).all()
         
         for contract in eth_contracts:
-            transaction: WrapperTransaction = to_addresses[contract[0].address]
+            transaction: Transaction = to_addresses[contract[0].address]
 
             con = block_event.network.rpc.eth.contract(abi=token_abi)
             tx_res = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
@@ -43,4 +38,4 @@ class OwnershipMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.event_type, self.queue, message)
+            send_to_backend(self.monitor_name, self.event_type, self.queue, message)

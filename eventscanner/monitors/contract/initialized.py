@@ -1,17 +1,12 @@
-from scanner.events.block_event import BlockEvent
-from mywish_models.models import ETHContract, Contract, Network, session
-from blockchain_common.wrapper_transaction import WrapperTransaction
+from base import BlockEvent, BaseMonitor, Transaction
+from models import ETHContract, Contract, Network, session
 from eventscanner.queue.pika_handler import send_to_backend
-from blockchain_common.base_monitor import BaseMonitor
 
 
 class InitializedMonitor(BaseMonitor):
     event_type = 'initialized'
 
     def on_new_block_event(self, block_event: BlockEvent):
-        if block_event.network.type != self.network_type:
-            return
-
         to_addresses = {}
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
@@ -23,7 +18,7 @@ class InitializedMonitor(BaseMonitor):
             .filter(Network.name == block_event.network.type).all()
 
         for contract in contracts:
-            transaction: WrapperTransaction = to_addresses[contract[0].address]
+            transaction: Transaction = to_addresses[contract[0].address]
 
             if transaction.outputs[0].raw_output_script != '0xe1c7392a':
                 continue
@@ -37,4 +32,4 @@ class InitializedMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.event_type, self.queue, message)
+            send_to_backend(self.monitor_name, self.event_type, self.queue, message)

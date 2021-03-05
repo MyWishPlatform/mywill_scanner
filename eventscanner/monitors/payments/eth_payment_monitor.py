@@ -1,16 +1,12 @@
-from blockchain_common.base_monitor import BaseMonitor
+from base import BlockEvent, BaseMonitor
+from models import UserSiteBalance, session
 from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
-from scanner.events.block_event import BlockEvent
 
 
 class EthPaymentMonitor(BaseMonitor):
     event_type = 'payment'
 
     def on_new_block_event(self, block_event: BlockEvent):
-        if block_event.network.type != self.network_type:
-            return
-
         addresses = block_event.transactions_by_address.keys()
         user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.eth_address.in_(addresses)).all()
         for user_site_balance in user_site_balances:
@@ -38,4 +34,4 @@ class EthPaymentMonitor(BaseMonitor):
                     'status': 'COMMITTED'
                 }
 
-                send_to_backend(self.event_type, self.queue, message)
+                send_to_backend(self.monitor_name, self.event_type, self.queue, message)

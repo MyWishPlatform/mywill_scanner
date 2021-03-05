@@ -1,21 +1,46 @@
+import os
 import sys
 import time
 import traceback
 
-from blockchain_common.wrapper_network import WrapperNetwork
-from scanner.services.last_block_persister import LastBlockPersister
-from scanner.services.scanner import Scanner
+from base.network import Network
 
 
-class ScannerPolling(Scanner):
+class LastBlockPersister:
+    # TODO move into database
+    base_dir = 'settings'
 
-    def __init__(self, network: WrapperNetwork, last_block_persister: LastBlockPersister, polling_interval: int,
+    def __init__(self, network: Network):
+        self.network_name: str = network.type
+
+    def get_last_block(self) -> int:
+        try:
+            with open(os.path.join(self.base_dir, self.network_name), 'r') as file:
+                last_block_number = file.read()
+        except FileNotFoundError:
+            return 1
+        return int(last_block_number)
+
+    def save_last_block(self, last_block_number: int):
+        with open(os.path.join(self.base_dir, self.network_name), 'w') as file:
+            file.write(str(last_block_number))
+
+
+class Scanner:
+    INFO_INTERVAL = 60000
+    WARN_INTERVAL = 120000
+
+    def __init__(self, network: Network, last_block_persister: LastBlockPersister, polling_interval: int,
                  commitment_chain_length: int, reach_interval: int = 0):
 
-        super().__init__(network, last_block_persister)
+        self.network = network
+        self.last_block_persister = last_block_persister
         self.polling_interval = polling_interval
         self.commitment_chain_length = commitment_chain_length
         self.reach_interval = reach_interval
+
+    def process_block(self, block):
+        raise NotImplementedError("WARNING: Function process_block must be overridden.")
 
     def poller(self):
         self.last_block_time = time.time()

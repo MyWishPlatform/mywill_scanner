@@ -1,8 +1,8 @@
-from blockchain_common.wrapper_block import WrapperBlock
-from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
+from base.block import Block
+from base.transaction_receipt import TransactionReceipt
 
 
-class WrapperNetwork:
+class Network:
     def __init__(self, type: str):
         self.type = type
 
@@ -32,10 +32,10 @@ class WrapperNetwork:
     def get_balance(self):
         pass
 
-    def get_block(self, number: int) -> WrapperBlock:
+    def get_block(self, number: int) -> Block:
         pass
 
-    def get_tx_receipt(self, hash: str) -> WrapperTransactionReceipt:
+    def get_tx_receipt(self, hash: str) -> TransactionReceipt:
         pass
 
     def get_balance_async(self):

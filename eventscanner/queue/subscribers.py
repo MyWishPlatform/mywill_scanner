@@ -11,7 +11,7 @@ for name, monitor_config in CONFIG["monitors"].items():
 
         for network in networks:
             monitor = monitor_class(network)
-            subscribe_list.append((monitor.on_new_block_event, network))
+            subscribe_list.append((monitor.process, network))
     else:
         print(f'Monitor {name} not found.')
 

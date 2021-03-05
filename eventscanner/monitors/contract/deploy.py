@@ -1,17 +1,12 @@
-from scanner.events.block_event import BlockEvent
-from mywish_models.models import ETHContract, Contract, Network, session
-from blockchain_common.wrapper_transaction import WrapperTransaction
+from base import BlockEvent, BaseMonitor, Transaction
+from models import ETHContract, Contract, Network, session
 from eventscanner.queue.pika_handler import send_to_backend
-from blockchain_common.base_monitor import BaseMonitor
 
 
 class DeployMonitor(BaseMonitor):
     event_type = 'deployed'
 
     def on_new_block_event(self, block_event: BlockEvent):
-        if block_event.network.type != self.network_type:
-            return
-
         deploy_hashes = {}
         for transactions_list in block_event.transactions_by_address.values():
             for transaction in transactions_list:
@@ -25,7 +20,7 @@ class DeployMonitor(BaseMonitor):
 
         for contract in eth_contracts:
             print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
-            transaction: WrapperTransaction = deploy_hashes[contract[0].tx_hash]
+            transaction: Transaction = deploy_hashes[contract[0].tx_hash]
             tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
 
             message = {
@@ -36,4 +31,4 @@ class DeployMonitor(BaseMonitor):
                 'status': 'COMMITTED'
             }
 
-            send_to_backend(self.event_type, self.queue, message)
+            send_to_backend(self.monitor_name, self.event_type, self.queue, message)

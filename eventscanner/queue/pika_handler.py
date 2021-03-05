@@ -2,7 +2,7 @@ import pika
 import json
 
 
-def send_to_backend(type: str, queue: str, message: dict):
+def send_to_backend(monitor_name: str, type: str, queue: str, message: dict):
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         'localhost',
         5672,
@@ -20,7 +20,7 @@ def send_to_backend(type: str, queue: str, message: dict):
     )
     connection.close()
 
-    print('message sent to backend: {}'.format(message), flush=True)
+    print('{} sent message to backend: {}'.format(monitor_name, message), flush=True)
 
 
 def send_to_monitor():

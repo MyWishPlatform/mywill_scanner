@@ -1,6 +1,5 @@
-from scanner.events.block_event import BlockEvent
+from base import BlockEvent
 from eventscanner.queue.pika_handler import send_to_backend
-from blockchain_common.wrapper_transaction import WrapperTransaction
 
 from settings import CONFIG
 

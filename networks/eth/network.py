@@ -5,16 +5,16 @@ from hexbytes import HexBytes
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from blockchain_common.eth_tokens import erc20_abi
-from blockchain_common.wrapper_block import WrapperBlock
-from blockchain_common.wrapper_network import WrapperNetwork
-from blockchain_common.wrapper_output import WrapperOutput
-from blockchain_common.wrapper_transaction import WrapperTransaction
-from blockchain_common.wrapper_transaction_receipt import WrapperTransactionReceipt
+from tokens import erc20_abi
+from base.block import Block
+from base.network import Network
+from base.output import Output
+from base.transaction import Transaction
+from base.transaction_receipt import TransactionReceipt
 from settings import CONFIG
 
 
-class EthNetwork(WrapperNetwork):
+class EthNetwork(Network):
 
     def __init__(self, type):
         super().__init__(type)
@@ -43,9 +43,9 @@ class EthNetwork(WrapperNetwork):
     def get_last_block(self):
         return self.rpc.eth.blockNumber
 
-    def get_block(self, number: int) -> WrapperBlock:
+    def get_block(self, number: int) -> Block:
         block = self.rpc.eth.getBlock(number, full_transactions=True)
-        block = WrapperBlock(
+        block = Block(
             block['hash'].hex(),
             block['number'],
             block['timestamp'],
@@ -64,7 +64,7 @@ class EthNetwork(WrapperNetwork):
         if isinstance(tx_hash, HexBytes):
             tx_hash = tx_hash.hex()
 
-        output = WrapperOutput(
+        output = Output(
             tx_hash,
             0,
             tx['to'],
@@ -77,7 +77,7 @@ class EthNetwork(WrapperNetwork):
         tx_creates = tx.get('creates', None)
 
         # 'creates' is None when tx dont create any contract
-        t = WrapperTransaction(
+        t = Transaction(
             tx_hash,
             [tx['from']],
             [output],
@@ -88,7 +88,7 @@ class EthNetwork(WrapperNetwork):
 
     def get_tx_receipt(self, hash):
         tx_res = self.rpc.eth.getTransactionReceipt(hash)
-        return WrapperTransactionReceipt(
+        return TransactionReceipt(
             tx_res['transactionHash'].hex(),
             tx_res['contractAddress'],
             tx_res['logs'],

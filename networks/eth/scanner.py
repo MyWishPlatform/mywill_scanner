@@ -1,16 +1,14 @@
 import collections
 from web3.exceptions import LogTopicError
 
+from tokens import token_abi
+from base import Block, Scanner, BlockEvent
 from eventscanner.queue.subscribers import pub
-from scanner.events.block_event import BlockEvent
-from blockchain_common.wrapper_block import WrapperBlock
-from scanner.services.scanner_polling import ScannerPolling
-from blockchain_common.eth_tokens import token_abi
 
 
-class EthScanner(ScannerPolling):
+class EthScanner(Scanner):
 
-    def process_block(self, block: WrapperBlock):
+    def process_block(self, block: Block):
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:
@@ -63,7 +61,7 @@ class EthScanner(ScannerPolling):
                 print('{}: Empty to and creates field for transaction {}. Skip it.'.format(self.network.type,
                                                                                            tx.tx_hash))
 
-    def _find_event(self, block: WrapperBlock) -> dict:
+    def _find_event(self, block: Block) -> dict:
         find_events = {}
         events = {
             "OwnershipTransferred": token_abi,
