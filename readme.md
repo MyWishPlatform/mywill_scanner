@@ -24,5 +24,5 @@ poetry install
 
 To start project, run:
 ```
-poetry run python networks/networks_scan_entrypoint.py
+poetry run python main.py
 ```
