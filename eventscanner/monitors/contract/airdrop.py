@@ -1,4 +1,5 @@
 from web3 import Web3
+from sqlalchemy import func
 
 from blockchain_common.base_monitor import BaseMonitor
 from blockchain_common.eth_tokens import token_abi
@@ -39,14 +40,14 @@ class AirdropMonitor(BaseMonitor):
 
         eth_contracts = (session.query(ETHContract, Contract, Network)
                          .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)
-                         .filter(ETHContract.address.in_(to_addresses.keys()))
+                         .filter(func.lower(ETHContract.address).in_(to_addresses.keys()))
                          .filter(Network.name == block_event.network.type)
                          # Filter only contracts with 'airdrop' contract_type
                          .filter(Contract.contract_type.in_(self.airdrop_contract_types))
                          .all())
 
         for contract in eth_contracts:
-            transaction: WrapperTransaction = to_addresses[contract[0].address]
+            transaction: WrapperTransaction = to_addresses[contract[0].address.lower()]
             tx_rec = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
             processed_logs = self.token_contract.events.Transfer().processReceipt(tx_rec)
 
