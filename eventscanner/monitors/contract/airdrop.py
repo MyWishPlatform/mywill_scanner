@@ -58,7 +58,7 @@ class AirdropMonitor(BaseMonitor):
                 'status': 'COMMITTED',
                 "type": "airdrop",
                 'airdroppedAddresses': [
-                    {"address": i.args['to'], "value": i.args['value']}
+                    {"address": i.args['to'].lower(), "value": i.args['value']}
                     for i in processed_logs]
             }
 
