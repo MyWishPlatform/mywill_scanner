@@ -1,3 +1,6 @@
+"""
+Contain all base object types.
+"""
 from base.block import Block
 from base.output import Output
 from base.scanner import Scanner

@@ -2,7 +2,7 @@ import collections
 from pubsub import pub
 from web3.exceptions import LogTopicError
 
-from tokens import token_abi
+from contracts import token_abi
 from base import Block, Scanner, BlockEvent
 
 

@@ -1,6 +1,6 @@
 from base import BlockEvent, BaseMonitor, Transaction
 from models import ETHContract, Contract, Network, session
-from tokens import token_abi
+from contracts import token_abi
 
 
 class OwnershipMonitor(BaseMonitor):

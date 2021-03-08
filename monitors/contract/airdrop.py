@@ -4,7 +4,7 @@ from sqlalchemy import func
 from base import BlockEvent, BaseMonitor, Transaction
 from models import ETHContract, Contract, Network, session
 from settings import ContractTypes
-from tokens import token_abi
+from contracts import token_abi
 
 
 class AirdropMonitor(BaseMonitor):

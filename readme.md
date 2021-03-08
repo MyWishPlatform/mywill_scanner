@@ -8,7 +8,7 @@
 ### Start project
 Before start make sure your workdir is project root and you setup config.
 
-Scanner starting from `networks/networks_scan_entrypoint.py`.
+Scanner starting from `main.py`.
 
 Scanner using `poetry`, to install poetry you need run command:
 ```
