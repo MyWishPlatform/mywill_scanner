@@ -9,7 +9,7 @@ from blockchain_common.wrapper_transaction import WrapperTransaction
 
 class BTCNetwork(WrapperNetwork):
 
-    ignore_output_types = ['nulldata', 'nonstandard']
+    ignore_output_types = ['nulldata', 'nonstandard', 'pubkey']
 
     def __init__(self, net_type: str):
         super().__init__(net_type)
