@@ -1,2 +1,2 @@
 from .config import CONFIG
-from .const import ContractTypes
+from .constants import ContractTypes
