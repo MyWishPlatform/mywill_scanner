@@ -8,10 +8,11 @@ from base.network import Network
 
 class LastBlockPersister:
     # TODO move into database
-    base_dir = 'settings'
+    base_dir = 'block_numbers'
 
     def __init__(self, network: Network):
         self.network_name: str = network.type
+        os.makedirs(self.base_dir, exist_ok=True)
 
     def get_last_block(self) -> int:
         try:

@@ -130,3 +130,6 @@ settings/
 *config*.yaml
 # except example
 !config.example.yaml
+
+# LastBlockPersister blocks dir
+block_numbers
