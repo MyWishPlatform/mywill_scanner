@@ -5,7 +5,7 @@ from blockchain_common.wrapper_network import WrapperNetwork
 
 class LastBlockPersister:
     # TODO move into database
-    base_dir = 'scanner/settings'
+    base_dir = 'settings'
 
     def __init__(self, network: WrapperNetwork):
         self.network_name: str = network.type
