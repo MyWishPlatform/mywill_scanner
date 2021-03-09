@@ -14,10 +14,10 @@ class AirdropMonitor(BaseMonitor):
     event_type = 'airdrop'
 
     airdrop_contract_types = [
-        ContractTypes.AIRDROP.value,
-        ContractTypes.TRON_AIRDROP.value,
-        ContractTypes.BINANCE_AIRDROP.value,
-        ContractTypes.MATIC_AIRDROP.value,
+        ContractTypes.Airdrop.value,
+        ContractTypes.TronAirdrop.value,
+        ContractTypes.BinanceAirdrop.value,
+        ContractTypes.MaticAirdrop.value,
     ]
 
     def __init__(self, network):
