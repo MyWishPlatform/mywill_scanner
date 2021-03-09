@@ -34,7 +34,7 @@ class ERC20PaymentMonitor:
             if not processed_receipt:
                 print('{}: WARNING! Can`t handle tx {}, probably we dont support this event'.format(
                     cls.network_types[0], tx.tx_hash), flush=True)
-                return
+                continue
 
             transfer_to = processed_receipt[0].args.to
             tokens_amount = processed_receipt[0].args.value
