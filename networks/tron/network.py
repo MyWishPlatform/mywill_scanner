@@ -10,7 +10,7 @@ class TronNetwork(Network):
     def __init__(self, type):
         super().__init__(type)
         config = CONFIG['networks'][type]
-        node_url = config['host']
+        node_url = config['url']
         pk = config['private_key']
 
         tron = Tron(
