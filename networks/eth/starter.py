@@ -1,6 +1,6 @@
-from .scanner import EthScanner
-from .network import EthNetwork
 from base.scanner import LastBlockPersister
+from .network import EthNetwork
+from .scanner import EthScanner
 
 
 class EthMaker:

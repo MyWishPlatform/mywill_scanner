@@ -1,14 +1,13 @@
 import collections
 
-from blockchain_common.wrapper_block import WrapperBlock
-from eventscanner.queue.subscribers import pub
-from scanner.events.block_event import BlockEvent
-from scanner.services.scanner_polling import ScannerPolling
+from pubsub import pub
+
+from base import Block, Scanner, BlockEvent
 
 
-class TronScanner(ScannerPolling):
+class TronScanner(Scanner):
 
-    def process_block(self, block: WrapperBlock):
+    def process_block(self, block: Block):
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:

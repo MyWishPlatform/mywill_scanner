@@ -1,5 +1,4 @@
-from scanner.services.last_block_persister import LastBlockPersister
-
+from base.scanner import LastBlockPersister
 from .network import TronNetwork
 from .scanner import TronScanner
 

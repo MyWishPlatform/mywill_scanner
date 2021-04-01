@@ -2,7 +2,7 @@ from tronapi import Tron
 
 from blockchain_common.wrapper_block import WrapperBlock
 from blockchain_common.wrapper_network import WrapperNetwork
-from networks.tron.services import TronWrapperTransaction
+from networks.tron.services import TronTransaction
 from settings.settings_local import NETWORKS
 
 
@@ -32,7 +32,7 @@ class TronNetwork(WrapperNetwork):
             block['blockID'],
             block['block_header']['raw_data']['number'],
             block['block_header']['raw_data']['timestamp'],
-            [TronWrapperTransaction.build(t) for t in transactions],
+            [TronTransaction.build(t) for t in transactions],
         )
 
     def get_tx_receipt(self, hash: str):

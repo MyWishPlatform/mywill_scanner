@@ -1,20 +1,11 @@
-from eventscanner.queue.pika_handler import send_to_backend
-from mywish_models.models import UserSiteBalance, session
-from scanner.events.block_event import BlockEvent
-from settings.settings_local import NETWORKS
+from base import BlockEvent, BaseMonitor
+from models import UserSiteBalance, session
 
 
-class TronPaymentMonitor:
-
-    network_types = ['TRON_MAINNET']
+class TronPaymentMonitor(BaseMonitor):
     event_type = 'payment'
-    queue = NETWORKS[network_types[0]]['queue']
 
-    @classmethod
-    def on_new_block_event(cls, block_event: BlockEvent):
-        if block_event.network.type not in cls.network_types:
-            return
-
+    def on_new_block_event(self, block_event: BlockEvent):
         addresses = block_event.transactions_by_address.keys()
         user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.tron_address.in_(addresses)).all()
 
@@ -45,4 +36,4 @@ class TronPaymentMonitor:
                     'status': 'COMMITTED'
                 }
 
-                send_to_backend(cls.event_type, cls.queue, message)
+                self.send_to_backend(message)

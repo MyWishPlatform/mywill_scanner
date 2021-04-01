@@ -1,8 +1,7 @@
-from blockchain_common.wrapper_output import WrapperOutput
-from blockchain_common.wrapper_transaction import WrapperTransaction
+from base import Output, Transaction
 
 
-class TronWrapperTransaction(WrapperTransaction):
+class TronTransaction(Transaction):
     def __init__(self, tx_hash, inputs, outputs, contract_creation, contracts, status):
         creates = contracts[0] if contracts else None
         super().__init__(tx_hash, inputs, outputs, contract_creation, creates)
@@ -10,7 +9,7 @@ class TronWrapperTransaction(WrapperTransaction):
         self.status = status
 
     @classmethod
-    def build(cls, tx) -> 'TronWrapperTransaction':
+    def build(cls, tx) -> 'TronTransaction':
         _hash = tx['txID']
         contract_wrapper = tx['raw_data']['contract'][0]
         contract = contract_wrapper['parameter']['value']
@@ -30,7 +29,7 @@ class TronWrapperTransaction(WrapperTransaction):
         )
 
     @classmethod
-    def _build_output(cls, tx) -> 'WrapperOutput':
+    def _build_output(cls, tx) -> 'Output':
         contract_wrapper = tx['raw_data']['contract'][0]
         contract_type = contract_wrapper['type']
         contract = contract_wrapper['parameter']['value']
@@ -47,4 +46,4 @@ class TronWrapperTransaction(WrapperTransaction):
         else:
             output_address = contract['owner_address']
 
-        return WrapperOutput(tx['txID'], 0, output_address, value, None)
+        return Output(tx['txID'], 0, output_address, value, None)
