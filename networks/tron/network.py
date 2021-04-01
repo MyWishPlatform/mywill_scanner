@@ -1,34 +1,33 @@
 from tronapi import Tron
 
-from blockchain_common.wrapper_block import WrapperBlock
-from blockchain_common.wrapper_network import WrapperNetwork
-from networks.tron.services import TronTransaction
-from settings.settings_local import NETWORKS
+from base import Block, Network
+from settings import CONFIG
+from .services import TronTransaction
 
 
-class TronNetwork(WrapperNetwork):
+class TronNetwork(Network):
 
     def __init__(self, type):
         super().__init__(type)
-        settings = NETWORKS[type]
+        config = CONFIG['networks'][type]
+        node_url = config['host']
+        pk = config['private_key']
 
-        node_url = settings['host']
-        pk = settings['private_key']
-
-        self.tron = Tron(
+        tron = Tron(
             full_node=node_url,
             solidity_node=node_url,
             event_server=node_url,
             private_key=pk
         )
+        self.add_rpc(tron)
 
     def get_last_block(self):
-        return self.tron.trx.get_block('latest')['block_header']['raw_data']['number']
+        return self.rpc.trx.get_block('latest')['block_header']['raw_data']['number']
 
     def get_block(self, number: int):
-        block = self.tron.trx.get_block(number)
+        block = self.rpc.trx.get_block(number)
         transactions = block.get('transactions', [])
-        return WrapperBlock(
+        return Block(
             block['blockID'],
             block['block_header']['raw_data']['number'],
             block['block_header']['raw_data']['timestamp'],
@@ -36,4 +35,4 @@ class TronNetwork(WrapperNetwork):
         )
 
     def get_tx_receipt(self, hash: str):
-        return self.tron.get_event_transaction_id(hash)
+        return self.rpc.get_event_transaction_id(hash)
