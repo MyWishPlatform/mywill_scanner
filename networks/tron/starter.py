@@ -1,12 +1,12 @@
 from base.scanner import LastBlockPersister
-from .network import EthNetwork
-from .scanner import EthScanner
+from .network import TronNetwork
+from .scanner import TronScanner
 
 
-class EthMaker:
+class TronMaker:
 
     def __init__(self, network_name: str, polling_interval: int, commitment_chain_length: int):
-        network = EthNetwork(network_name)
+        network = TronNetwork(network_name)
         last_block_persister = LastBlockPersister(network)
-        self.scanner = EthScanner(network, last_block_persister,
+        self.scanner = TronScanner(network, last_block_persister,
                                   polling_interval, commitment_chain_length)
