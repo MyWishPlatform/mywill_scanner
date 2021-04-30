@@ -1,6 +1,6 @@
 from telegram.ext import Updater, CommandHandler
 
-from settings import config
+from settings import CONFIG
 from .storage import get_saved_chat_ids, write_new_chat_ids
 
 help_message = """/help - see command and description again\n
@@ -58,7 +58,7 @@ def stop(update, context):
 
 class AlertBot:
     def __init__(self):
-        token = getattr(config, 'telegram_token', None)
+        token = CONFIG.get('telegram_token')
         if not token:
             self.updater = None
             print('WARNING! Cant start bot without token in settings', flush=True)
