@@ -49,3 +49,6 @@ erc20_tokens:
 
 db:
   url: 'postgresql://user:pass@host:port/db_name'
+
+# Telegram token should be unique for every scanner
+telegram_token: ''
