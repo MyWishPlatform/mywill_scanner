@@ -6,6 +6,8 @@ import monitors
 from networks import scanner_makers
 from settings import CONFIG
 
+from telegram_alerts import alert_bot
+
 subscribe_list = []
 for name, monitor_config in CONFIG["monitors"].items():
     monitor_class = getattr(monitors, name, None)
@@ -36,6 +38,10 @@ class ScanEntrypoint(threading.Thread):
 
 
 if __name__ == "__main__":
+    # start telegram alert bot
+    alert_bot.start_polling()
+
+    # run all network scanners
     for net_name, net_conf in CONFIG["networks"].items():
         maker_names = net_conf["scanner_makers"]
         for maker_name in maker_names:
