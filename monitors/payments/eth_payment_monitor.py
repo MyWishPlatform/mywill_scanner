@@ -1,9 +1,18 @@
 from base import BlockEvent, BaseMonitor
 from models import UserSiteBalance, session
+from settings import CONFIG
 
 
 class EthPaymentMonitor(BaseMonitor):
     event_type = 'payment'
+    currency: str
+
+    def __init__(self, network):
+        super().__init__(network)
+        currency = CONFIG['networks'][self.network_type].get('currency')
+        if not currency:
+            raise TypeError(f'currency for {self.network_type} should be specified')
+        self.currency = currency
 
     def on_new_block_event(self, block_event: BlockEvent):
         addresses = block_event.transactions_by_address.keys()
@@ -26,7 +35,7 @@ class EthPaymentMonitor(BaseMonitor):
                 message = {
                     'userId': user_site_balance.user_id,
                     'transactionHash': transaction.tx_hash,
-                    'currency': 'ETH',
+                    'currency': self.currency,
                     'amount': transaction.outputs[0].value,
                     'siteId': user_site_balance.subsite_id,
                     'success': tx_receipt.success,

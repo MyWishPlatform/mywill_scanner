@@ -14,6 +14,9 @@ networks:
     scanner_makers:
       - FIRST_SCANNER_MAKER_NAME
       - SECOND_SCANNER_MAKER_NAME
+    # Indicates what 'currency' will be put in the message to the backend.
+    # Specific only for web3-based networks.
+    currency: 'ETH'
   ETHEREUM_ROPSTEN: # Example with eth network
     url: 'https://ropsten.infura.io/v3/<id>'
     polling_interval: 10
