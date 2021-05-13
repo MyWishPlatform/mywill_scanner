@@ -11,7 +11,7 @@ class EthPaymentMonitor(BaseMonitor):
         super().__init__(network)
         currency = CONFIG['networks'][self.network_type].get('currency')
         if not currency:
-            raise TypeError(f'currency for {self.network_type} should be specified')
+            raise TypeError(f'currency field should be specified for {self.network_type} network.')
         self.currency = currency
 
     def on_new_block_event(self, block_event: BlockEvent):
