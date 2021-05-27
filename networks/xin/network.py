@@ -1,5 +1,5 @@
 import time
-
+import http.client
 import requests
 from hexbytes import HexBytes
 from web3 import Web3
@@ -10,7 +10,7 @@ from contracts import erc20_abi
 from settings import CONFIG
 
 
-class EthNetwork(Network):
+class XinNetwork(Network):
 
     def __init__(self, type):
         super().__init__(type)
@@ -31,7 +31,7 @@ class EthNetwork(Network):
 
         etherscan_api_key = CONFIG['networks'][type].get('etherscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
-        self.etherscan = EtherScanAPI(etherscan_api_key, is_testnet) if etherscan_api_key else None
+        self.etherscan = XinFinScanAPI(etherscan_api_key, is_testnet) if etherscan_api_key else None
 
         self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
             self.rpc.toChecksumAddress(t_address),
@@ -39,10 +39,29 @@ class EthNetwork(Network):
         ) for t_name, t_address in CONFIG['erc20_tokens'].items()}
 
     def get_last_block(self):
-        return self.rpc.eth.blockNumber
+        conn = http.client.HTTPSConnection("rpc.xinfin.network")
+
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":}"
+
+        headers = {'content-type': "application/json"}
+
+        conn.request("POST", "//blockNumber", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        print(data.decode("utf-8"))
 
     def get_block(self, number: int) -> Block:
-        block = self.rpc.eth.getBlock(number, full_transactions=True)
+        conn = http.client.HTTPSConnection("rpc.xinfin.network")
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x0\",true],\"id\":}"
+
+        headers = {'content-type': "application/json"}
+
+        conn.request("POST", "//getBlockByNumber", payload, headers)
+
+        res = conn.getresponse()
+        block = res.read().__dict__
+
+        # block = self.rpc.eth.getBlock(number, full_transactions=True)
         block = Block(
             block['hash'].hex(),
             block['number'],
@@ -85,7 +104,18 @@ class EthNetwork(Network):
         return t
 
     def get_tx_receipt(self, hash):
-        tx_res = self.rpc.eth.getTransactionReceipt(hash)
+        conn = http.client.HTTPSConnection("rpc.xinfin.network")
+
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[" \
+                  "\"0xa3ece39ae137617669c6933b7578b94e705e765683f260fcfe30eaa41932610f\"],\"id\":1} "
+
+        headers = {'content-type': "application/json"}
+
+        conn.request("POST", "//getTransactionReceipt", payload, headers)
+
+        res = conn.getresponse()
+        tx_res = res.read().__dict__
+
         return TransactionReceipt(
             tx_res['transactionHash'].hex(),
             tx_res['contractAddress'],
@@ -94,12 +124,12 @@ class EthNetwork(Network):
         )
 
     def get_processed_tx_receipt(self, tx_hash, token_name):
-        tx_res = self.rpc.eth.getTransactionReceipt(tx_hash)
+        tx_res = self.get_tx_receipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
 
 
-class EtherScanAPI:
+class XinFinScanAPI:
     """
     Interface for EtherScan API.
 

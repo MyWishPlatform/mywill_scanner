@@ -24,6 +24,7 @@ networks:
     queue: notification-ethereum
     scanner_makers:
       - EthMaker
+      - XinMaker
   # After this will be placed unique keys for specific networks
   ETHEREUM:
     # etherscan key to obtain parsed logs
@@ -32,6 +33,9 @@ networks:
     is_testnet: False
   BINANCE:
     remove_middleware: True
+  XINFIN:
+    # флаг, разрешающий использование api xinfin
+    use_xin_api: True
 
 # All monitors, witch should listen for specific network events
 # One monitor can listen to multiple networks
