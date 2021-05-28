@@ -35,7 +35,8 @@ def get_tx_receipt(hash):
 class XinNetwork(Network):
     def __init__(self, type):
         super().__init__(type)
-    config = CONFIG['networks'][type]
+
+    # config = CONFIG['networks'][type]
     #
     # urls = config['url']
     # # Old config support
@@ -131,5 +132,3 @@ class XinNetwork(Network):
     #     tx_data = get_tx_receipt(tx_hash)
     #     processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_data)
     # return processed
-
-
