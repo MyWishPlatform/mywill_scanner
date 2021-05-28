@@ -5,7 +5,7 @@ from base.transaction_receipt import TransactionReceipt
 class Network:
     def __init__(self, type: str):
         self.type = type
-        print('NET '+ type)
+        print('2NET '+ type)
         # Base for list of rpc
         self._rpc = []
         self._rpc_counter = 0
