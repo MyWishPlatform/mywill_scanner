@@ -12,9 +12,7 @@ from settings import CONFIG
 
 class XinNetwork(Network):
 
-    def __init__(self, *args):
-        print(args)
-
+    def __init__(self, type):
         super().__init__(type)
 
 
