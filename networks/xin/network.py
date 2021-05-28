@@ -10,7 +10,7 @@ from networks.xin.xin_api import XinFinScanAPI
 from settings import CONFIG
 
 
-            class XinNetwork(Network):
+class XinNetwork(Network):
 
     def __init__(self, type):
         super().__init__(type)
