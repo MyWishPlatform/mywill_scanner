@@ -17,6 +17,7 @@ class XinNetwork(Network):
         super().__init__(type)
 
 
+
         xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
         xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
