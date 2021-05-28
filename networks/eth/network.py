@@ -95,6 +95,8 @@ class EthNetwork(Network):
         tx_res = self.rpc.eth.getTransactionReceipt(tx_hash)
         processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
         return processed
+
+
 class EtherScanAPI:
     """
     Interface for EtherScan API.

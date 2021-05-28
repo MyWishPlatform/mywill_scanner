@@ -9,32 +9,10 @@ from networks.xin.xin_api import XinFinScanAPI
 from settings import CONFIG
 
 
-def get_tx_receipt(hash):
-    conn = http.client.HTTPSConnection("rpc.xinfin.network")
-
-    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[" \
-              "\"0xa3ece39ae137617669c6933b7578b94e705e765683f260fcfe30eaa41932610f\"],\"id\":1} "
-
-    headers = {'content-type': "application/json"}
-
-    conn.request("POST", "//getTransactionReceipt", payload, headers)
-
-    res = conn.getresponse()
-    tx_res = res.read()
-    tx_dict = tx_res.decode("UTF-8")
-    tx_data = ast.literal_eval(tx_dict)
-
-    return TransactionReceipt(
-        tx_data['transactionHash'].hex(),
-        tx_data['contractAddress'],
-        tx_data['logs'],
-        bool(tx_data['status']),
-    )
-
-
 class XinNetwork(Network):
-    def __init__(self):
+    def __init__(self, type):
         super().__init__(type)
+
         xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
         xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
@@ -111,6 +89,28 @@ class XinNetwork(Network):
             tx_creates
         )
         return t
+
+    def get_tx_receipt(hash):
+        conn = http.client.HTTPSConnection("rpc.xinfin.network")
+
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[" \
+                  "\"0xa3ece39ae137617669c6933b7578b94e705e765683f260fcfe30eaa41932610f\"],\"id\":1} "
+
+        headers = {'content-type': "application/json"}
+
+        conn.request("POST", "//getTransactionReceipt", payload, headers)
+
+        res = conn.getresponse()
+        tx_res = res.read()
+        tx_dict = tx_res.decode("UTF-8")
+        tx_data = ast.literal_eval(tx_dict)
+
+        return TransactionReceipt(
+            tx_data['transactionHash'].hex(),
+            tx_data['contractAddress'],
+            tx_data['logs'],
+            bool(tx_data['status']),
+        )
 
     # def get_processed_tx_receipt(self, tx_hash, token_name):
     #     tx_data = get_tx_receipt(tx_hash)
