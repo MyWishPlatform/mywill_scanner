@@ -33,7 +33,7 @@ def get_tx_receipt(hash):
 
 
 class XinNetwork(Network):
-    def __init__(self, type):
+    def __init__(self):
         super().__init__(type)
         xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
