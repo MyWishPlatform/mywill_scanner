@@ -14,6 +14,7 @@ class XinNetwork(Network):
 
     def __init__(self, *args):
         print(args)
+
         super().__init__(type)
 
 
