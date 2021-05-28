@@ -51,9 +51,9 @@ class XinNetwork(Network):
     #         rpc.middleware_onion.inject(geth_poa_middleware, layer=0)
     #     self.add_rpc(rpc)
     #
-    xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
-    is_testnet = CONFIG['networks'][type].get('is_testnet')
-    xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
+        xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
+        is_testnet = CONFIG['networks'][type].get('is_testnet')
+        xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
 
     #
     # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
