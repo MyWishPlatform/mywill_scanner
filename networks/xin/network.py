@@ -12,9 +12,8 @@ from settings import CONFIG
 
 class XinNetwork(Network):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+    def __init__(self):
+        super().__init__(type)
 
         xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         is_testnet = CONFIG['networks'][type].get('is_testnet')
