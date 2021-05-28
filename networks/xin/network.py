@@ -4,6 +4,7 @@ import http.client
 from hexbytes import HexBytes
 
 from base import Block, Output, Transaction, TransactionReceipt
+from models import Network
 from networks.xin.xin_api import XinFinScanAPI
 from settings import CONFIG
 
@@ -31,15 +32,15 @@ def get_tx_receipt(hash):
     )
 
 
-class XinNetwork:
-    # def __init__(self, type):
-    # super().__init__(type)
-    # config = CONFIG['networks'][type]
+class XinNetwork(Network):
+    def __init__(self, type):
+        super().__init__(type)
+    config = CONFIG['networks'][type]
     #
     # urls = config['url']
     # # Old config support
     # if not isinstance(urls, list):
-    #     # if config.get('use_xin_api'):
+    #    if config.get('use_xin_api'):
     #     #     rpc =
     #     urls = [urls]
     # for url in urls:
