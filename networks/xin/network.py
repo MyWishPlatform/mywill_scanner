@@ -81,6 +81,7 @@ class XinNetwork(Network):
             block_data['timestamp'],
             [self._build_transaction(t) for t in block_data['transactions']],
         )
+        print(block_data)
 
         if self.xinscan:
             internal_txs = [self._build_transaction(t) for t in self.xinscan.get_internal_txs(number)]
