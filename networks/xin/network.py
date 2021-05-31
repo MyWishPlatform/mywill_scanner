@@ -12,11 +12,11 @@ from settings import CONFIG
 def get_last_block():
     conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[latest, true],\"id\":}"
+    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[latest, true],\"id\":1}"
 
     headers = {'content-type': "application/json"}
 
-    conn.request("POST", "//blockNumber", payload, headers)
+    conn.request("POST", "//getBlockByNumber", payload, headers)
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
