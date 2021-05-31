@@ -1,14 +1,10 @@
 import ast
 import http.client
-import time
 
-import requests
 from hexbytes import HexBytes
 
 from base import Block, Output, Transaction, TransactionReceipt, Network
-from networks.eth.network import APILimitError
 from networks.xin.xin_scan_api import XinFinScanAPI
-from networks.xin.xinblock import XinBlock
 from settings import CONFIG
 
 
@@ -19,8 +15,7 @@ class XinNetwork(Network):
 
         self.xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         self.is_testnet = CONFIG['networks'][type].get('is_testnet')
-        self.xinscan = XinFinScanAPI(self.xinscan_api_key,
-                                     self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
+        self.xinscan = XinFinScanAPI(self.xinscan_api_key, self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
 
     #
     # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
@@ -77,10 +72,10 @@ class XinNetwork(Network):
         block_data = ast.literal_eval(dict_block)
 
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
-        block_data = XinBlock(
-            # block_data['hash'].hex(),
-            block_data['result'],
-            # block_data['timestamp'],
+        block_data = Block(
+            block_data['hash'].hex(),
+            block_data['number'],
+            block_data['timestamp'],
             [self._build_transaction(t) for t in block_data['transactions']],
         )
         print(block_data)
@@ -118,3 +113,5 @@ class XinNetwork(Network):
             tx_creates
         )
         return t
+
+
