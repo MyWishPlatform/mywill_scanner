@@ -12,15 +12,16 @@ from settings import CONFIG
 def get_last_block():
     conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[latest, true],\"id\":1}"
+    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":83}"
 
     headers = {'content-type': "application/json"}
 
-    conn.request("POST", "//getBlockByNumber", payload, headers)
+    conn.request("POST", "//blockNumber", payload, headers)
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
-    return data
+
+    return int(data, 16)
 
 
 def get_tx_receipt():
