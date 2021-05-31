@@ -4,8 +4,7 @@ import http.client
 
 from hexbytes import HexBytes
 
-from base import Block, Output, Transaction, TransactionReceipt
-from models import Network
+from base import Block, Output, Transaction, TransactionReceipt, Network
 from networks.xin.xin_api import XinFinScanAPI
 from settings import CONFIG
 
