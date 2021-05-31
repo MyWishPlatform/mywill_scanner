@@ -35,7 +35,7 @@ networks:
     remove_middleware: True
   XINFIN:
     xinscan_api_key: 'key_string'
-    is_testnet: False
+    #is_testnet: False
 
 
 # All monitors, witch should listen for specific network events
