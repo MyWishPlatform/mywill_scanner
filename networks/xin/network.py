@@ -79,7 +79,7 @@ class XinNetwork(Network):
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
         block_data = XinBlock(
             # block_data['hash'].hex(),
-            block_data['number'],
+            block_data['result'],
             # block_data['timestamp'],
             [self._build_transaction(t) for t in block_data['transactions']],
         )
