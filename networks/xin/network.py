@@ -4,7 +4,8 @@ import http.client
 
 from hexbytes import HexBytes
 
-from base import Block, Output, Transaction, TransactionReceipt, Network
+from base import Block, Output, Transaction, TransactionReceipt
+from models import Network
 from networks.xin.xin_api import XinFinScanAPI
 from settings import CONFIG
 
@@ -64,7 +65,7 @@ class XinNetwork(Network):
 
     def get_block(self, number: int) -> Block:
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
-        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x0\",true],\"id\":}"
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[true, latest],\"id\":}"
 
         headers = {'content-type': "application/json"}
 
