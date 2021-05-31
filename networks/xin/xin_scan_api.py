@@ -1,18 +1,19 @@
 import time
 
 import requests
-import http.client
+
+from networks.eth.network import APILimitError
 
 
 class XinFinScanAPI:
     """
-    Interface for EtherScan API.
+            Interface for EtherScan API.
 
-    We can't get internal transactions from ETH RPC, cause they aren't actual transactions.
-    But EtherScan allow us to get this info.
+            We can't get internal transactions from ETH RPC, cause they aren't actual transactions.
+            But EtherScan allow us to get this info.
 
-    Makes request with considering the limit. Without API key it's only one request per 3 sec.
-    """
+            Makes request with considering the limit. Without API key it's only one request per 3 sec.
+            """
 
     default_api_key = 'YourApiKeyToken'
 
@@ -61,11 +62,11 @@ class XinFinScanAPI:
 
     def get_internal_txs(self, block_number, attempt=0):
         """
-        Return internal transactions by block number
+                Return internal transactions by block number
 
-        Compare API limit with last request time.
-        If requests over limits - wait and try again after.
-        """
+                Compare API limit with last request time.
+                If requests over limits - wait and try again after.
+                """
         if attempt >= 5:
             raise TimeoutError(f'Too many attempts to get internal txs from {block_number} block')
         attempt += 1
@@ -105,6 +106,10 @@ class XinFinScanAPI:
                 return []
             raise APILimitError(data['message'])
 
+    class APILimitError(Exception):
+        ...
 
-class APILimitError(Exception):
-    ...
+# def get_processed_tx_receipt(self, tx_hash, token_name):
+#     tx_data = get_tx_receipt(tx_hash)
+#     processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_data)
+# return processed

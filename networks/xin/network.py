@@ -1,10 +1,13 @@
 import ast
 import http.client
+import time
 
+import requests
 from hexbytes import HexBytes
 
 from base import Block, Output, Transaction, TransactionReceipt, Network
-from networks.xin.xin_api import XinFinScanAPI
+from networks.eth.network import APILimitError
+from networks.xin.xin_scan_api import XinFinScanAPI
 from settings import CONFIG
 
 
@@ -13,9 +16,9 @@ class XinNetwork(Network):
         super().__init__(type)
         config = CONFIG['networks'][type]
 
-    xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
-    is_testnet = CONFIG['networks'][type].get('is_testnet')
-    xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None #тут было (xinscan_api_key, .. )
+        self.xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
+        self.is_testnet = CONFIG['networks'][type].get('is_testnet')
+        self.xinscan = XinFinScanAPI(self.xinscan_api_key, self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
 
     #
     # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
@@ -113,7 +116,4 @@ class XinNetwork(Network):
         )
         return t
 
-# def get_processed_tx_receipt(self, tx_hash, token_name):
-#     tx_data = get_tx_receipt(tx_hash)
-#     processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_data)
-# return processed
+
