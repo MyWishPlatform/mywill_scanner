@@ -12,7 +12,7 @@ from settings import CONFIG
 def get_last_block():
     conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":}"
+    payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[latest, true],\"id\":}"
 
     headers = {'content-type': "application/json"}
 
