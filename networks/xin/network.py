@@ -1,6 +1,6 @@
 import ast
 import http.client
-
+import numpy
 
 from hexbytes import HexBytes
 
@@ -21,7 +21,7 @@ def get_last_block():
     data = res.read()
     print(data.decode("utf-8"))
 
-    return int(data, 16)
+    return int.from_bytes(data, byteorder='big', signed=True)
 
 
 def get_tx_receipt():
