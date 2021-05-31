@@ -9,6 +9,19 @@ from settings import CONFIG
 
 
 class XinNetwork(Network):
+    def __init__(self, type):
+        super().__init__(type)
+        config = CONFIG['networks'][type]
+
+    xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
+    is_testnet = CONFIG['networks'][type].get('is_testnet')
+    xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
+
+    #
+    # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
+    #     self.rpc.toChecksumAddress(t_address),
+    #     abi=erc20_abi
+    # ) for t_name, t_address in CONFIG['erc20_tokens'].items()}
     def get_last_block(self):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
@@ -44,21 +57,6 @@ class XinNetwork(Network):
             tx_data['logs'],
             bool(tx_data['status']),
         )
-
-    def __init__(self, type):
-        print('1Xin ' + type)
-        super().__init__(type)
-        print('2Xin ' + type)
-
-        xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
-        is_testnet = CONFIG['networks'][type].get('is_testnet')
-        xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
-
-        #
-        # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
-        #     self.rpc.toChecksumAddress(t_address),
-        #     abi=erc20_abi
-        # ) for t_name, t_address in CONFIG['erc20_tokens'].items()}
 
     def get_block(self, number: int) -> Block:
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
