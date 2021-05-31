@@ -20,6 +20,7 @@ def get_last_block():
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data
 
 
 def get_tx_receipt():
