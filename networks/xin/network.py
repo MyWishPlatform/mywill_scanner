@@ -13,9 +13,9 @@ class XinNetwork(Network):
         super().__init__(type)
         config = CONFIG['networks'][type]
 
-    xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
+    #xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
     is_testnet = CONFIG['networks'][type].get('is_testnet')
-    xinscan = XinFinScanAPI(xinscan_api_key, is_testnet) if xinscan_api_key else None
+    xinscan = XinFinScanAPI(is_testnet) #if xinscan_api_key else None #тут было (xinscan_api_key, .. )
 
     #
     # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
