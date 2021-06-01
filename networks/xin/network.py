@@ -51,10 +51,9 @@ class XinNetwork(Network):
 
         conn.request("POST", "//getTransactionReceipt", payload, headers)
 
-        res = conn.getresponse()
-        tx_res = res.read()
-        tx_dict = tx_res.decode("UTF-8")
-        tx_data = ast.literal_eval(tx_dict)
+        response = conn.getresponse()
+        data_str = response.read().decode("utf-8")
+        tx_data = json.loads(data_str)
 
         return TransactionReceipt(
             tx_data['transactionHash'].hex(),
@@ -77,11 +76,11 @@ class XinNetwork(Network):
         data_dictionary = json.loads(data_str)
         print(data_dictionary)
         print(type(data_dictionary))
-
+        number_integer = int(data_dictionary['result']['number'], 16)
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
         data_dictionary = Block(
             data_dictionary['result']['hash'],
-            data_dictionary['result']['number'],
+            number_integer,
             data_dictionary['result']['timestamp'],
             [self._build_transaction(t) for t in (data_dictionary['result']['transactions'])],
         )
