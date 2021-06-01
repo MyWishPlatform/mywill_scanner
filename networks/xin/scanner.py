@@ -24,7 +24,7 @@ class XinScanner(Scanner):
         # events = self._find_event(block)
         block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
 
-        print(block_event)
+        print(block_event.__dict__)
         pub.sendMessage(self.network.type, block_event=block_event)
 
 
