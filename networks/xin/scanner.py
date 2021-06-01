@@ -23,7 +23,10 @@ class XinScanner(Scanner):
         # in developing
         # events = self._find_event(block)
         block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
+
+        print(block_event)
         pub.sendMessage(self.network.type, block_event=block_event)
+
 
     def _check_tx_from(self, tx, addresses):
         from_address = tx.inputs[0]
