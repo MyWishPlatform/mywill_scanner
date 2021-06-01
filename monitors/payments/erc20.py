@@ -8,11 +8,12 @@ class ERC20PaymentMonitor(BaseMonitor):
     tokens = CONFIG['erc20_tokens']
 
     def on_new_block_event(self, block_event: BlockEvent):
-        print(block_event)
+        # print(block_event)
         addresses = block_event.transactions_by_address.keys()
-        print(addresses)
+        # print(addresses)
         for token_name, token_address in self.tokens.items():
             token_address = token_address.lower()
+            print(token_address)
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
                 return self.handle(token_address, token_name, transactions, block_event.network)
