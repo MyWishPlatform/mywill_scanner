@@ -14,6 +14,7 @@ class DeployMonitor(BaseMonitor):
                 if transaction.contract_creation:
                     deploy_hashes[transaction.tx_hash.lower()] = transaction
                     print(deploy_hashes)
+                    print('deploy hash')
 
         eth_contracts = session.query(ETHContract, Contract, Network)\
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
