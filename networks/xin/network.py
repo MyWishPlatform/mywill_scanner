@@ -37,7 +37,7 @@ class XinNetwork(Network):
         data_dictionary = json.loads(data_str)
         print(data_dictionary)
         print(type(data_dictionary))
-        data_int = int(data_dictionary['result']['number'], 16)
+        data_int = int(data_dictionary['result'], 16)
         print(data_int)
         return data_int
 
