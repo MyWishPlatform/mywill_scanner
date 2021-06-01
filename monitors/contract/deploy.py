@@ -21,6 +21,8 @@ class DeployMonitor(BaseMonitor):
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
             .filter(ETHContract.tx_hash.in_(deploy_hashes.keys()))\
             .filter(Network.name == block_event.network.type).all()
+        print(block_event)
+        print("блок эвент 2")
         print(eth_contracts)
         print("контракты после фильтра")
 
