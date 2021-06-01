@@ -119,3 +119,8 @@ class XinNetwork(Network):
             tx_creates
         )
         return t
+
+    def get_processed_tx_receipt(self, tx_hash, token_name):
+        tx_res = self.rpc.eth.getTransactionReceipt(tx_hash)
+        processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_res)
+        return processed
