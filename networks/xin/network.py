@@ -36,6 +36,7 @@ class XinNetwork(Network):
         data_str = response.read().decode("utf-8")
         data_dictionary = json.loads(data_str)
         print(data_dictionary)
+        print(type(data_dictionary))
         data_int = int(data_dictionary['result']['number'], 16)
         print(data_int)
         return data_int
