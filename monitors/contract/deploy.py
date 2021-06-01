@@ -10,6 +10,9 @@ class DeployMonitor(BaseMonitor):
         print('евент блок 1')
         deploy_hashes = {}
         for transactions_list in block_event.transactions_by_address.values():
+            print(transactions_list)
+            print(block_event)
+
             for transaction in transactions_list:
                 if transaction.contract_creation:
                     print("зашел в иф")
@@ -22,7 +25,7 @@ class DeployMonitor(BaseMonitor):
             .filter(ETHContract.tx_hash.in_(deploy_hashes.keys()))\
             .filter(Network.name == block_event.network.type).all()
         print(block_event)
-        print("блок эвент 2")
+        print("блок эвент 3")
         print(eth_contracts)
         print("контракты после фильтра")
 
