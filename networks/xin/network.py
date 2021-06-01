@@ -35,8 +35,8 @@ class XinNetwork(Network):
         response = conn.getresponse()
         data_str = response.read().decode("utf-8")
         data_dictionary = json.loads(data_str)
-        print(data_dictionary)
-        return data_dictionary
+        print(int(data_dictionary))
+        return int(data_dictionary)
 
     def get_tx_receipt(self, hash):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
