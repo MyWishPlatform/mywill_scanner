@@ -19,6 +19,7 @@ class ERC20PaymentMonitor(BaseMonitor):
     def handle(self, token_address: str, token_name, transactions, network):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
+                print(tx)
                 continue
 
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
