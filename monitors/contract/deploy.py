@@ -10,12 +10,13 @@ class DeployMonitor(BaseMonitor):
         print('евент блок 1')
         deploy_hashes = {}
         for transactions_list in block_event.transactions_by_address.values():
-            print(transactions_list.__str__)
+            print(transactions_list)
             print("лист транзакций")
             print(block_event)
             print("блок эвент 2")
 
             for transaction in transactions_list:
+                print(transaction.__dict__)
                 if transaction.contract_creation:
                     print("зашел в иф")
                     deploy_hashes[transaction.tx_hash.lower()] = transaction
