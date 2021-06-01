@@ -70,25 +70,24 @@ class XinNetwork(Network):
 
         response = conn.getresponse()
         data_str = response.read().decode("utf-8")
-        data_dict = json.loads(data_str)
-        print(data_dict)
-        print(type(data_dict))
-        data_hash = data_dict(data_dict['result']['hash'])
+        data_dictionary = json.loads(data_str)
+        print(data_dictionary)
+        print(type(data_dictionary))
+
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
-        data_dict = Block(
-            data_hash,
-            #data_dict(data_dict['result']['hash']),
-            data_dict(data_dict['result']['number']),
-            data_dict(data_dict['result']['timestamp']),
-            [self._build_transaction(t) for t in data_dict(data_dict['result']['transactions'])],
+        data_dictionary = Block(
+            data_dictionary(data_dictionary['result']['hash']),
+            data_dictionary(data_dictionary['result']['number']),
+            data_dictionary(data_dictionary['result']['timestamp']),
+            [self._build_transaction(t) for t in data_dictionary(data_dictionary['result']['transactions'])],
         )
-        print(data_dict)
+        print(data_dictionary)
 
         if self.xinscan:
             internal_txs = [self._build_transaction(t) for t in self.xinscan.get_internal_txs(number)]
-            data_dict.transactions += internal_txs
+            data_dictionary.transactions += internal_txs
 
-        return data_dict
+        return data_dictionary
 
     @staticmethod
     def _build_transaction(tx):
