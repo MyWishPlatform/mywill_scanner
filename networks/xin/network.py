@@ -70,8 +70,8 @@ class XinNetwork(Network):
         response = conn.getresponse()
         data_str = response.read().decode("utf-8")
         data_dictionary = json.loads(data_str)
-        #print(data_dictionary)
-        print(type(data_dictionary))
+        print(data_dictionary)
+        #print(type(data_dictionary))
 
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
         data_dictionary = Block(
