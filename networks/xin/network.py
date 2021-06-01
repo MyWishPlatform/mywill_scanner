@@ -40,7 +40,8 @@ class XinNetwork(Network):
     def get_tx_receipt(self, hash):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[],\"id\":1} "
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[" \
+                  "\"0xa3ece39ae137617669c6933b7578b94e705e765683f260fcfe30eaa41932610f\"],\"id\":1} "
 
         headers = {'content-type': "application/json"}
 
@@ -61,7 +62,7 @@ class XinNetwork(Network):
     def get_block(self, number: int) -> Block:
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[],\"id\":1}"
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x0\",true],\"id\":1}"
 
         headers = {'content-type': "application/json"}
 
@@ -71,7 +72,7 @@ class XinNetwork(Network):
         data_str = response.read().decode("utf-8")
         data_dictionary = json.loads(data_str)
         print(data_dictionary)
-        #print(type(data_dictionary))
+       # print(type(data_dictionary))
 
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
         data_dictionary = Block(
