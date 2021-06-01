@@ -79,7 +79,7 @@ class XinNetwork(Network):
             data_dictionary['result']['hash'],
             data_dictionary['result']['number'],
             data_dictionary['result']['timestamp'],
-            [self._build_transaction(t) for t in data_dictionary(data_dictionary['result']['transactions'])],
+            [self._build_transaction(t) for t in (data_dictionary['result']['transactions'])],
         )
         print(data_dictionary)
 
