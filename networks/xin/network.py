@@ -1,5 +1,6 @@
 import ast
 import http.client
+import json
 
 from hexbytes import HexBytes
 
@@ -60,31 +61,33 @@ class XinNetwork(Network):
 
     def get_block(self, number: int) -> Block:
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
-        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[true, latest],\"id\":1}"
+
+        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x0\",true],\"id\":1}"
 
         headers = {'content-type': "application/json"}
 
         conn.request("POST", "//getBlockByNumber", payload, headers)
 
-        res = conn.getresponse()
-        block = res.read()
-        dict_block = block.decode("UTF-8")
-        block_data = ast.literal_eval(dict_block)
+        response = conn.getresponse()
+        data_str = response.read().decode("utf-8")
+        data_dict = json.loads(data_str)
+        print(data_dict)
+        print(type(data_dict))
 
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
-        block_data = Block(
-            block_data['hash'].hex(),
-            block_data['number'],
-            block_data['timestamp'],
-            [self._build_transaction(t) for t in block_data['transactions']],
+        data_dict = Block(
+            data_dict['hash'].hex(),
+            data_dict['number'],
+            data_dict['timestamp'],
+            [self._build_transaction(t) for t in data_dict['transactions']],
         )
-        print(block_data)
+        print(data_dict)
 
         if self.xinscan:
             internal_txs = [self._build_transaction(t) for t in self.xinscan.get_internal_txs(number)]
-            block_data.transactions += internal_txs
+            data_dict.transactions += internal_txs
 
-        return block_data
+        return data_dict
 
     @staticmethod
     def _build_transaction(tx):
