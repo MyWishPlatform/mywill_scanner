@@ -10,7 +10,7 @@ class ERC20PaymentMonitor(BaseMonitor):
     def on_new_block_event(self, block_event: BlockEvent):
         # print(block_event)
         addresses = block_event.transactions_by_address.keys()
-        # print(addresses)
+        print(addresses)
         for token_name, token_address in self.tokens.items():
             token_address = token_address.lower()
             print(token_address)
