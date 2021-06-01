@@ -10,7 +10,8 @@ class DeployMonitor(BaseMonitor):
         print('евент блок 1')
         deploy_hashes = {}
         for transactions_list in block_event.transactions_by_address.values():
-            print(transactions_list)
+            transactions_list_dic = transactions_list.__dict__
+            print(transactions_list_dic)
             print("лист транзакций")
             print(block_event)
             print("блок эвент 2")
