@@ -16,7 +16,8 @@ class XinNetwork(Network):
 
         self.xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         self.is_testnet = CONFIG['networks'][type].get('is_testnet')
-        self.xinscan = XinFinScanAPI(self.xinscan_api_key, self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
+        self.xinscan = XinFinScanAPI(self.xinscan_api_key,
+                                     self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
 
     #
     # self.erc20_contracts_dict = {t_name: self.rpc.eth.contract(
@@ -31,11 +32,11 @@ class XinNetwork(Network):
         headers = {'content-type': "application/json"}
 
         conn.request("POST", "//blockNumber", payload, headers)
-        res = conn.getresponse()
-        data = res.read()
-        print(data.decode("utf-8"))
-
-        return int(data, 16)
+        response = conn.getresponse()
+        data_str = response.read().decode("utf-8")
+        data_dictionary = json.loads(data_str)
+        print(data_dictionary)
+        return data_dictionary
 
     def get_tx_receipt(self, hash):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
@@ -116,5 +117,3 @@ class XinNetwork(Network):
             tx_creates
         )
         return t
-
-
