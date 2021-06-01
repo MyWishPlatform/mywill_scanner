@@ -73,10 +73,11 @@ class XinNetwork(Network):
         data_dict = json.loads(data_str)
         print(data_dict)
         print(type(data_dict))
-
+        data_hash = data_dict(data_dict['result']['hash'])
         # block = self.rpc.eth.getBlock(number, full_transactions=True)
         data_dict = Block(
-            data_dict(data_dict['result']['hash']),
+            data_hash,
+            #data_dict(data_dict['result']['hash']),
             data_dict(data_dict['result']['number']),
             data_dict(data_dict['result']['timestamp']),
             [self._build_transaction(t) for t in data_dict(data_dict['result']['transactions'])],
