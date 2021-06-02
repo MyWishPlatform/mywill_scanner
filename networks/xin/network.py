@@ -56,8 +56,8 @@ class XinNetwork(Network):
 
         return TransactionReceipt(
             tx_data['result']['transactionHash'],
-            tx_data['contractAddress'],
-            tx_data['logs'],
+            tx_data['result']['contractAddress'],
+            tx_data['result']['logs'],
             bool(tx_data['status']),
         )
 
