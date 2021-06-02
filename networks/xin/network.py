@@ -64,8 +64,7 @@ class XinNetwork(Network):
 
     def get_block(self, number: int) -> Block:
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
-
-        payload = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[latest, true],\"id\":1}"
+        payload = f"{{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[{number}, true],\"id\":1}}"
 
         headers = {'content-type': "application/json"}
 
