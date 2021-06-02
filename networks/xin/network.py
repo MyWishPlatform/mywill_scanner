@@ -55,7 +55,7 @@ class XinNetwork(Network):
         tx_data = json.loads(data_str)
 
         return TransactionReceipt(
-            tx_data["result"]["hash"],
+            tx_data['result']['hash'],
             tx_data['contractAddress'],
             tx_data['logs'],
             bool(tx_data['status']),
