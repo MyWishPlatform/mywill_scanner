@@ -44,8 +44,7 @@ class XinNetwork(Network):
     def get_tx_receipt(self, hash):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
-        payload = f"{{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[" \
-                  f"\"{hash}\"],\"id\":1}} "
+        payload = f"{{\"jsonrpc\":\"2.0\",\"method\":\"eth_getTransactionReceipt\",\"params\":[\"{hash}\"],\"id\":1}} "
 
         headers = {'content-type': "application/json"}
 
@@ -56,7 +55,7 @@ class XinNetwork(Network):
         tx_data = json.loads(data_str)
 
         return TransactionReceipt(
-            tx_data['transactionHash'].hex(),
+            tx_data['hash'].hex(),
             tx_data['contractAddress'],
             tx_data['logs'],
             bool(tx_data['status']),
