@@ -58,7 +58,7 @@ class XinNetwork(Network):
             tx_data['result']['transactionHash'],
             tx_data['result']['contractAddress'],
             tx_data['result']['logs'],
-            bool(tx_data['status']),
+            bool(tx_data['result']['status']),
         )
 
     def get_block(self, number: int) -> Block:
