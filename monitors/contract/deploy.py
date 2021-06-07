@@ -6,31 +6,22 @@ class DeployMonitor(BaseMonitor):
     event_type = 'deployed'
 
     def on_new_block_event(self, block_event: BlockEvent):
-        #print(block_event)
-        #print('евент блок 1')
+
         deploy_hashes = {}
         for transactions_list in block_event.transactions_by_address.values():
-            #print(transactions_list)
-            #print("лист транзакций")
-            #print(block_event)
-            #print("блок эвент 2")
 
             for transaction in transactions_list:
                 print(transaction.__dict__)
                 if transaction.contract_creation:
-                    #print("зашел в иф")
+
                     deploy_hashes[transaction.tx_hash.lower()] = transaction
-                    #rint(deploy_hashes)
-                    #print('deploy hash')
+
 
         eth_contracts = session.query(ETHContract, Contract, Network)\
             .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
             .filter(ETHContract.tx_hash.in_(deploy_hashes.keys()))\
             .filter(Network.name == block_event.network.type).all()
-        #print(block_event)
-        #print("блок эвент 3")
-        #print(eth_contracts)
-        #print("контракты после фильтра")
+
 
         for contract in eth_contracts:
             print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)

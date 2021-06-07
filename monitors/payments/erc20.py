@@ -8,12 +8,11 @@ class ERC20PaymentMonitor(BaseMonitor):
     tokens = CONFIG['erc20_tokens']
 
     def on_new_block_event(self, block_event: BlockEvent):
-        # print(block_event)
+
         addresses = block_event.transactions_by_address.keys()
-        #print(addresses)
+
         for token_name, token_address in self.tokens.items():
             token_address = token_address.lower()
-            #print(token_address)
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
                 return self.handle(token_address, token_name, transactions, block_event.network)
@@ -21,7 +20,6 @@ class ERC20PaymentMonitor(BaseMonitor):
     def handle(self, token_address: str, token_name, transactions, network):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
-                #print(tx)
                 continue
 
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)

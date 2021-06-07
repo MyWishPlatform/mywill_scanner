@@ -33,7 +33,6 @@ class BaseMonitor:
         channel = connection.channel()
         channel.queue_declare(queue=self.queue, durable=True, auto_delete=False,
                               exclusive=False)
-        # print(channel)
         channel.basic_publish(
             exchange='',
             routing_key=self.queue,

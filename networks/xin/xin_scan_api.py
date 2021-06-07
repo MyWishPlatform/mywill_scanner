@@ -108,8 +108,3 @@ class XinFinScanAPI:
 
     class APILimitError(Exception):
         ...
-
-# def get_processed_tx_receipt(self, tx_hash, token_name):
-#     tx_data = get_tx_receipt(tx_hash)
-#     processed = self.erc20_contracts_dict[token_name].events.Transfer().processReceipt(tx_data)
-# return processed

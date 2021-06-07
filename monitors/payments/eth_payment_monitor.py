@@ -15,7 +15,6 @@ class EthPaymentMonitor(BaseMonitor):
         self.currency = currency
 
     def on_new_block_event(self, block_event: BlockEvent):
-        #print(block_event)
         addresses = block_event.transactions_by_address.keys()
         user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.eth_address.in_(addresses)).all()
         for user_site_balance in user_site_balances:
