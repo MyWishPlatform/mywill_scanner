@@ -16,7 +16,7 @@ class XinNetwork(Network):
         self.xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         self.is_testnet = CONFIG['networks'][type].get('is_testnet')
         self.xinscan = XinFinScanAPI(self.xinscan_api_key,
-                                     self.is_testnet) if self.xinscan_api_key else None  # тут было (xinscan_api_key, .. )
+                                     self.is_testnet) if self.xinscan_api_key else None
 
     def get_last_block(self):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
@@ -56,9 +56,9 @@ class XinNetwork(Network):
 
     def get_block(self, number: int) -> Block:
         hex_number = hex(number)
-        print(hex_number)
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
-        payload = f"{{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"{hex_number}\", true],\"id\":1}}"
+        payload = f"{{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"{hex_number}\", true]," \
+                  f"\"id\":1}} "
 
         headers = {'content-type': "application/json"}
 
@@ -76,7 +76,6 @@ class XinNetwork(Network):
             data_dictionary['result']['timestamp'],
             [self._build_transaction(t) for t in (data_dictionary['result']['transactions'])],
         )
-        print(data_dictionary)
 
         if self.xinscan:
             internal_txs = [self._build_transaction(t) for t in self.xinscan.get_internal_txs(number)]
