@@ -11,17 +11,13 @@ class DeployMonitor(BaseMonitor):
         for transactions_list in block_event.transactions_by_address.values():
 
             for transaction in transactions_list:
-                print(transaction.__dict__)
                 if transaction.contract_creation:
-
                     deploy_hashes[transaction.tx_hash.lower()] = transaction
 
-
-        eth_contracts = session.query(ETHContract, Contract, Network)\
-            .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id)\
-            .filter(ETHContract.tx_hash.in_(deploy_hashes.keys()))\
+        eth_contracts = session.query(ETHContract, Contract, Network) \
+            .filter(Contract.id == ETHContract.contract_id, Contract.network_id == Network.id) \
+            .filter(ETHContract.tx_hash.in_(deploy_hashes.keys())) \
             .filter(Network.name == block_event.network.type).all()
-
 
         for contract in eth_contracts:
             print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
