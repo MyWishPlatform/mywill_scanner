@@ -20,8 +20,6 @@ class EthScanner(Scanner):
             self._check_tx_from(transaction, address_transactions)
             self._check_tx_to(transaction, address_transactions)
 
-        # in developing
-        # events = self._find_event(block)
         block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
@@ -71,7 +69,8 @@ class EthScanner(Scanner):
         for event, abi in events.items():
             try:
                 contract = self.network.rpc.eth.contract(abi=abi)
-                event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number, toBlock=block.number)
+                event_filter = contract.events.__getitem__(event).createFilter(fromBlock=block.number,
+                                                                               toBlock=block.number)
                 entries = event_filter.get_all_entries()
                 if entries:
                     find_events[event] = entries
