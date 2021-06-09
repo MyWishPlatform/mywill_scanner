@@ -15,7 +15,6 @@ class XinNetwork(Network):
 
         self.is_testnet = CONFIG['networks'][type].get('is_testnet')
 
-
     def get_last_block(self):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
@@ -74,10 +73,6 @@ class XinNetwork(Network):
             data_dictionary['result']['timestamp'],
             [self._build_transaction(t) for t in (data_dictionary['result']['transactions'])],
         )
-
-        if self.xinscan:
-            internal_txs = [self._build_transaction(t) for t in self.xinscan.get_internal_txs(number)]
-            data_dictionary.transactions += internal_txs
 
         return data_dictionary
 
