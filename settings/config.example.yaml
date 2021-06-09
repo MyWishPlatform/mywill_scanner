@@ -33,6 +33,13 @@ networks:
     is_testnet: False
   BINANCE:
     remove_middleware: True
+  XINFIN:
+    url: 'https://ropsten.infura.io/v3/<id>'
+    polling_interval: 10
+    commitment_chain_length: 5
+    queue: notification-xinfin
+    scanner_makers:
+      - XinMaker
 
 # All monitors, witch should listen for specific network events
 # One monitor can listen to multiple networks
