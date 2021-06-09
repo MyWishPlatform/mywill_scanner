@@ -4,7 +4,7 @@ import json
 from hexbytes import HexBytes
 
 from base import Block, Output, Transaction, TransactionReceipt, Network
-from networks.xin.xin_scan_api import XinFinScanAPI
+
 from settings import CONFIG
 
 
@@ -13,10 +13,8 @@ class XinNetwork(Network):
         super().__init__(type)
         config = CONFIG['networks'][type]
 
-        self.xinscan_api_key = CONFIG['networks'][type].get('xinscan_api_key')
         self.is_testnet = CONFIG['networks'][type].get('is_testnet')
-        self.xinscan = XinFinScanAPI(self.xinscan_api_key,
-                                     self.is_testnet) if self.xinscan_api_key else None
+
 
     def get_last_block(self):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")

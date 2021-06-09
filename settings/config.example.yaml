@@ -29,14 +29,10 @@ networks:
   ETHEREUM:
     # etherscan key to obtain parsed logs
     etherscan_api_key: 'key_string'
-    # If true, xinfin will do ropsten requests instead of mainnet
+    # If true, etherscan will do ropsten requests instead of mainnet
     is_testnet: False
   BINANCE:
     remove_middleware: True
-  XINFIN:
-    xinscan_api_key: 'key_string'
-    is_testnet: False
-
 
 # All monitors, witch should listen for specific network events
 # One monitor can listen to multiple networks
