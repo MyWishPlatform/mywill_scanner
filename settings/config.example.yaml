@@ -24,7 +24,6 @@ networks:
     queue: notification-ethereum
     scanner_makers:
       - EthMaker
-      - XinMaker
   # After this will be placed unique keys for specific networks
   ETHEREUM:
     # etherscan key to obtain parsed logs
@@ -34,7 +33,6 @@ networks:
   BINANCE:
     remove_middleware: True
   XINFIN:
-    url: 'https://ropsten.infura.io/v3/<id>'
     polling_interval: 10
     commitment_chain_length: 20
     queue: notification-xinfin

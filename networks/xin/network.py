@@ -13,8 +13,6 @@ class XinNetwork(Network):
         super().__init__(type)
         config = CONFIG['networks'][type]
 
-        self.is_testnet = CONFIG['networks'][type].get('is_testnet')
-
     def get_last_block(self):
         conn = http.client.HTTPSConnection("rpc.xinfin.network")
 
