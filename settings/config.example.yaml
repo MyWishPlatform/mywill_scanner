@@ -36,7 +36,7 @@ networks:
   XINFIN:
     url: 'https://ropsten.infura.io/v3/<id>'
     polling_interval: 10
-    commitment_chain_length: 5
+    commitment_chain_length: 20
     queue: notification-xinfin
     scanner_makers:
       - XinMaker
