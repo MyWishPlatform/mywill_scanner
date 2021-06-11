@@ -26,6 +26,7 @@ class EthPaymentMonitor(BaseMonitor):
         for user_site_balance in user_site_balances:
             transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
             print('ТРАНЗЫ ' + transactions)
+            print(block_event)
 
             if not transactions:
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
