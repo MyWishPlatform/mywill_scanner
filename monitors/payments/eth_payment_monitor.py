@@ -18,7 +18,8 @@ class EthPaymentMonitor(BaseMonitor):
         print('ABOBUS')
         addresses = block_event.transactions_by_address.keys()
         print('АДРЕСА')
-        print(addresses.__dict__)
+        for key, value in addresses.items():
+            print(key, value)
         user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.eth_address.in_(addresses)).all()
         print('БАЛАНС')
         print(user_site_balances)
