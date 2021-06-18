@@ -15,18 +15,11 @@ class EthPaymentMonitor(BaseMonitor):
         self.currency = currency
 
     def on_new_block_event(self, block_event: BlockEvent):
-        print('ABOBUS')
         addresses = block_event.transactions_by_address.keys()
-        print(block_event.__dict__)
-        print('АДРЕСА')
-        print(addresses)
         user_site_balances = session.query(UserSiteBalance).filter(UserSiteBalance.eth_address.in_(addresses)).all()
-        print('БАЛАНС')
-        print(user_site_balances)
         for user_site_balance in user_site_balances:
             transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
             print('ТРАНЗЫ ' + transactions)
-
 
             if not transactions:
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
