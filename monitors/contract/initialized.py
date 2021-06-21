@@ -18,8 +18,8 @@ class InitializedMonitor(BaseMonitor):
 
         for contract in contracts:
             transaction: Transaction = to_addresses[contract[0].address]
-            print("транзы")
-            print('transaction')
+            print("транзы", flush=True)
+            print('transaction', flush=True)
             if transaction.outputs[0].raw_output_script != '0xe1c7392a':
                 continue
 

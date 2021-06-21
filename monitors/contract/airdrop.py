@@ -44,8 +44,8 @@ class AirdropMonitor(BaseMonitor):
             transaction: Transaction = to_addresses[contract[0].address.lower()]
             tx_rec = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
             processed_logs = self.token_contract.events.Transfer().processReceipt(tx_rec)
-            print('логи')
-            print(processed_logs)
+            print('логи', flush=True)
+            print(processed_logs, flush=True)
             message = {
                 'contractId': contract[0].id,
                 'transactionHash': transaction.tx_hash,
