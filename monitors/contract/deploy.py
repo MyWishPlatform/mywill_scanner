@@ -23,6 +23,7 @@ class DeployMonitor(BaseMonitor):
             print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
             transaction: Transaction = deploy_hashes[contract[0].tx_hash]
             tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
+            print(tx_receipt)
 
             message = {
                 'contractId': contract[0].id,
