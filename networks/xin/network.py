@@ -82,7 +82,7 @@ class XinNetwork(Network):
         if isinstance(tx_hash, HexBytes):
             tx_hash = tx_hash.hex()
 
-        addr_to = tx['to'].address
+        addr_to = tx['to']['address']
         if addr_to[:3] == 'xdc':
             addr_to = addr_to.replace('xdc', '0x')
 
