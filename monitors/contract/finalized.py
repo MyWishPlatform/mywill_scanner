@@ -22,6 +22,8 @@ class FinalizedMonitor(BaseMonitor):
 
             con = block_event.network.rpc.eth.contract(abi=token_abi)
             tx_res = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
+            print('1')
+            print(tx_res)
 
             if not tx_res or tx_res[0]['event'] != 'finalized':
                 continue
@@ -29,6 +31,7 @@ class FinalizedMonitor(BaseMonitor):
             message = {
                 'transactionHash': transaction.tx_hash,
                 'address': transaction.creates,
+                'tx': tx_res,
                 'success': True,
                 'status': 'COMMITTED'
             }
