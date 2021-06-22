@@ -24,17 +24,20 @@ networks:
     queue: notification-ethereum
     scanner_makers:
       - EthMaker
-      - XinMaker
   # After this will be placed unique keys for specific networks
   ETHEREUM:
     # etherscan key to obtain parsed logs
     etherscan_api_key: 'key_string'
-    # If true, xinfin will do ropsten requests instead of mainnet
+    # If true, etherscan will do ropsten requests instead of mainnet
     is_testnet: False
   BINANCE:
     remove_middleware: True
   XINFIN:
-
+    polling_interval: 10
+    commitment_chain_length: 20
+    queue: notification-xinfin
+    scanner_makers:
+      - XinMaker
 
 # All monitors, witch should listen for specific network events
 # One monitor can listen to multiple networks
