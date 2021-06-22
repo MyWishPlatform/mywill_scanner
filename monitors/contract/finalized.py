@@ -19,7 +19,7 @@ class FinalizedMonitor(BaseMonitor):
 
         for contract in eth_contracts:
             transaction: Transaction = to_addresses[contract[0].address]
-            print('1')
+            print('5')
             print(transaction.outputs[0].raw_output_script)
             if transaction.outputs[0].raw_output_script != '0x7d64bcb4':
                 continue
