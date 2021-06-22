@@ -55,7 +55,7 @@ monitors:
     networks:
       - MATIC_TESTNET
       - HECOCHAIN_MAINNET
-      - HECOCHAIN_TESTNE
+      - HECOCHAIN_TESTNET
 
 # ERC20 tokens, in witch we should approve payments
 erc20_tokens:
