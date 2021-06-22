@@ -51,6 +51,11 @@ monitors:
   EthPaymentMonitor:
     networks:
       - ETHEREUM_MAINNET
+  FinalizedMonitor:
+    networks:
+      - MATIC_TESTNET
+      - HECOCHAIN_MAINNET
+      - HECOCHAIN_TESTNE
 
 # ERC20 tokens, in witch we should approve payments
 erc20_tokens:
