@@ -19,20 +19,17 @@ class FinalizedMonitor(BaseMonitor):
 
         for contract in eth_contracts:
             transaction: Transaction = to_addresses[contract[0].address]
-
-            con = block_event.network.rpc.eth.contract(abi=token_abi)
-            tx_res = block_event.network.rpc.eth.getTransactionReceipt(transaction.tx_hash)
             print('1')
-            print(tx_res)
-
-            if not tx_res or tx_res[0]['event'] != 'finalized':
+            print(transaction.outputs[0].raw_output_script)
+            if transaction.outputs[0].raw_output_script != '0x7d64bcb4':
                 continue
 
             message = {
+                'contractId': contract[0].id,
                 'transactionHash': transaction.tx_hash,
                 'address': transaction.creates,
-                'tx': tx_res,
                 'success': True,
                 'status': 'COMMITTED'
             }
+
             self.send_to_backend(message)
