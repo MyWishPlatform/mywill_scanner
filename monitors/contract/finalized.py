@@ -35,5 +35,4 @@ class FinalizedMonitor(BaseMonitor):
                 'success': True,
                 'status': 'COMMITTED'
             }
-
             self.send_to_backend(message)
