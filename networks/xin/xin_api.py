@@ -1,9 +1,8 @@
 import requests
 import http.client
 
+
 class XinFinApi:
-
-
 
     def __init__(self):
         self.set_base_url()
