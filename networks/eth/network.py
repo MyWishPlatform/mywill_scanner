@@ -62,22 +62,28 @@ class EthNetwork(Network):
         if isinstance(tx_hash, HexBytes):
             tx_hash = tx_hash.hex()
 
+        addr_to = tx['to']
+        if addr_to[:3] == 'xdc':
+            addr_to = addr_to.replace('xdc', '0x')
+
         output = Output(
             tx_hash,
             0,
-            tx['to'],
+            addr_to,
             tx['value'],
             tx['input']
         )
 
-        # Field 'to' is empty when tx creates contract
         contract_creation = tx['to'] is None
         tx_creates = tx.get('creates', None)
 
-        # 'creates' is None when tx dont create any contract
+        addr_from = tx['from']
+        if addr_from[:3] == 'xdc':
+            addr_from = addr_from.replace('xdc', '0x')
+
         t = Transaction(
             tx_hash,
-            [tx['from']],
+            addr_from,
             [output],
             contract_creation,
             tx_creates
