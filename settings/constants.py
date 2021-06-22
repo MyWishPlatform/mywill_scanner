@@ -38,3 +38,6 @@ class ContractTypes(Enum):
     MaticIco = 32
     MaticToken = 33
     MaticAirdrop = 34
+    XinFinToken = 35
+    HecoChainToken = 36
+    HecoChainICO = 37
