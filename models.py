@@ -13,6 +13,7 @@ UserSiteBalance = Base.classes.profile_usersitebalance
 ETHContract = Base.classes.contracts_ethcontract
 Contract = Base.classes.contracts_contract
 Network = Base.classes.deploy_network
+CommonDetails = Base.classes.contracts_commondetails
 
 
 session = Session(engine)
