@@ -13,7 +13,9 @@ UserSiteBalance = Base.classes.profile_usersitebalance
 ETHContract = Base.classes.contracts_ethcontract
 Contract = Base.classes.contracts_contract
 Network = Base.classes.deploy_network
-CommonDetails = Base.classes.contracts_commondetails
 
+tokens = {'xin': 'contractdetailsxinfintoken', 'eth': 'contractdetailstoken', 'polygon': 'contractdetailsmatictoken',
+          'heco': 'contractdetailshecochaintoken', 'binance': 'contractdetailsbinancetoken'}
+tokens_details = {token: getattr(Base.classes, 'contracts_' + details) for token, details in tokens}
 
 session = Session(engine)
