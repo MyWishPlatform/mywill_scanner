@@ -16,6 +16,6 @@ Network = Base.classes.deploy_network
 
 tokens = {'xin': 'contractdetailsxinfintoken', 'eth': 'contractdetailstoken', 'polygon': 'contractdetailsmatictoken',
           'heco': 'contractdetailshecochaintoken', 'binance': 'contractdetailsbinancetoken'}
-tokens_details = {token: getattr(Base.classes, 'contracts_' + details) for token, details in tokens}
+tokens_details = {token: getattr(Base.classes, 'contracts_' + details) for token, details in tokens.items()}
 
 session = Session(engine)
