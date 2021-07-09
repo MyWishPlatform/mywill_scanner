@@ -15,7 +15,7 @@ class EthSendingMonitor(BaseMonitor):
         whitelabels = []
         for detail in tokens_details:
             result = session.query(detail, Network, Contract)\
-                .filter(Contract.id == detail.contract_id, Contract.network.id == Network.id)\
+                .filter(Contract.id == detail.contract_id, Contract.network_id == Network.id)\
                 .filter(detail.white_label_hash.in_(deploy_hashes.keys()))\
                 .filter(Network.name == block_event.network.type).all()
             whitelabels.extend(result)
