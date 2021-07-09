@@ -14,16 +14,16 @@ class EthSendingMonitor(BaseMonitor):
 
         whitelabels = []
         for detail in tokens_details:
-            result =  session.query(detail).filter(detail.white_label_hash.in_(deploy_hashes.keys()))
+            result = session.query(detail).filter(detail.white_label_hash.in_(deploy_hashes.keys()))
             whitelabels.append(result)
 
-        for detail in whitelabels:
-            print("contract_id: ", detail.contract.id, 'white_label hash: ', detail.white_label_hash)
-            transaction: Transaction = deploy_hashes[detail.white_label_hash]
+        for catched_detail in whitelabels:
+            print("contract_id: ", catched_detail.contract.id, 'white_label hash: ', catched_detail.white_label_hash)
+            transaction: Transaction = deploy_hashes[catched_detail.white_label_hash]
             tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
 
             message = {
-                'contractId': detail.contract.id,
+                'contractId': catched_detail.contract.id,
                 'transactionHash': transaction.tx_hash,
                 'address': transaction.creates,
                 'success': tx_receipt.success,
