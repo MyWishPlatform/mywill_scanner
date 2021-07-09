@@ -1,5 +1,5 @@
 from base import BlockEvent, BaseMonitor, Transaction
-from models import session, tokens_details
+from models import session, tokens_details, Network, Contract
 
 
 class EthSendingMonitor(BaseMonitor):
@@ -14,7 +14,10 @@ class EthSendingMonitor(BaseMonitor):
 
         whitelabels = []
         for detail in tokens_details:
-            result = session.query(detail).filter(detail.white_label_hash.in_(deploy_hashes.keys()))
+            result = session.query(detail, Network, Contract)\
+                .filter(Contract.id == detail.contract_id, Contract.network.id == Network.id)\
+                .filter(detail.white_label_hash.in_(deploy_hashes.keys()))\
+                .filter(Network.name == block_event.network.type).all()
             whitelabels.extend(result)
 
         for catched_detail in whitelabels:
