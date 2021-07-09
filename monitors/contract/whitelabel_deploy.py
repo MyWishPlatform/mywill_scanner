@@ -3,7 +3,7 @@ from models import session, tokens_details
 
 
 class EthSendingMonitor(BaseMonitor):
-    event_type = 'launched'
+    event_type = 'launch'
 
     def on_new_block_event(self, block_event: BlockEvent):
 
