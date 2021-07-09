@@ -1,6 +1,5 @@
 from base import BlockEvent, BaseMonitor, Transaction
 from models import session, tokens_details, Contract, Network
-from sqlalchemy.orm import joinedload
 
 
 class EthSendingMonitor(BaseMonitor):
@@ -15,10 +14,10 @@ class EthSendingMonitor(BaseMonitor):
 
         whitelabels = []
         for detail in tokens_details:
-            result = session.query(detail).options(joinedload(Contract.network)).all()
-            filtered = result.filter(detail.white_label_hash.in_(deploy_hashes.keys()))\
-                .filter(Contract.id == detail.contract_id & Contract.network.name == block_event.network.type)
-            whitelabels.extend(filtered)
+            result = session.query(detail, Contract, Network).join(detail, Contract.network)\
+                .filter(detail.white_label_hash.in_(deploy_hashes.keys()))\
+                .filter(Contract.id == detail.contract_id, Contract.network.name == block_event.network.type)
+            whitelabels.extend(result)
 
         for catched_detail in whitelabels:
             print("contract_id: ", catched_detail.contract_id, 'white_label hash: ', catched_detail.white_label_hash)
