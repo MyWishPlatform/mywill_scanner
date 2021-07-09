@@ -15,7 +15,7 @@ class EthSendingMonitor(BaseMonitor):
         whitelabels = []
         for detail in tokens_details:
             result = session.query(detail).filter(detail.white_label_hash.in_(deploy_hashes.keys()))
-            whitelabels.append(result)
+            whitelabels.extend(result)
 
         for catched_detail in whitelabels:
             print("contract_id: ", catched_detail.contract.id, 'white_label hash: ', catched_detail.white_label_hash)
