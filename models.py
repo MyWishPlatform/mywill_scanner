@@ -14,5 +14,8 @@ ETHContract = Base.classes.contracts_ethcontract
 Contract = Base.classes.contracts_contract
 Network = Base.classes.deploy_network
 
+details_names = ['contractdetailsxinfintoken', 'contractdetailstoken', 'contractdetailsmatictoken',
+                 'contractdetailshecochaintoken', 'contractdetailsbinancetoken']
+tokens_details = [getattr(Base.classes, 'contracts_' + details) for details in details_names]
 
 session = Session(engine)
