@@ -33,11 +33,11 @@ class EthPaymentMonitor(BaseMonitor):
                 tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
 
                 message = {
-                    'userId': user_site_balance.user_id,
+                    'exchangeId': user_site_balance.id,
+                    'address' : user_site_balance.eth_address,
                     'transactionHash': transaction.tx_hash,
                     'currency': self.currency,
                     'amount': transaction.outputs[0].value,
-                    'siteId': user_site_balance.subsite_id,
                     'success': tx_receipt.success,
                     'status': 'COMMITTED'
                 }

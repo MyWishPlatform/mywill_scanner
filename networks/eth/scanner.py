@@ -21,7 +21,10 @@ class EthScanner(Scanner):
             self._check_tx_to(transaction, address_transactions)
 
         block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
-        pub.sendMessage(self.network.type, block_event=block_event)
+        try:
+            pub.sendMessage(self.network.type, block_event=block_event)
+        except Exception as e:
+            print(e)
 
     def _check_tx_from(self, tx, addresses):
         from_address = tx.inputs[0]
@@ -76,5 +79,5 @@ class EthScanner(Scanner):
                     find_events[event] = entries
             except LogTopicError as err:
                 print(str(err))
-
+        print('find events',find_events)
         return find_events

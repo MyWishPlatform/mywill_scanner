@@ -7,7 +7,7 @@ from bitcoinrpc.authproxy import JSONRPCException
 
 
 class BTCNetwork(Network):
-    ignore_output_types = ['nulldata', 'nonstandard', 'pubkey']
+    ignore_output_types = ['nulldata', 'nonstandard', 'pubkey', 'multisig']
 
     def __init__(self, type: str):
         super().__init__(type)
@@ -45,13 +45,18 @@ class BTCNetwork(Network):
 
     def _build_outputs(self, tx) -> [Output]:
         vout = tx['vout']
-        return [Output(
-            tx['hash'],
-            o['n'],
-            o['scriptPubKey']['addresses'],
-            self.interface.dec_to_int(o['value']),
-            None
-        ) for o in vout if o['scriptPubKey']['type'] not in self.ignore_output_types]
+        out_list = []
+        for o in vout:
+            if o['scriptPubKey']['type'] not in self.ignore_output_types:
+                out_list.append(Output(tx['hash'], o['n'], o['scriptPubKey']['addresses'], self.interface.dec_to_int(o['value']), None))
+        return out_list
+    #    return [Output(
+      #      tx['hash'],
+     #       o['n'],
+      #      o['scriptPubKey']['addresses'],
+       #     self.interface.dec_to_int(o['value']),
+       #     None
+       # ) for o in vout if o['scriptPubKey']['type'] in self.ignore_output_types]
 
 
 class APILimitError(Exception):

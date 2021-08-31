@@ -27,9 +27,11 @@ class BaseMonitor:
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             'localhost',
             5672,
-            'mywill',
-            pika.PlainCredentials('java', 'java'),
-        ))
+            'ducatus_exchange',
+            pika.PlainCredentials('ducatus_exchange', 'ducatus_exchange'),
+            heartbeat=3600,
+            blocked_connection_timeout=3600
+            ))
         channel = connection.channel()
         channel.queue_declare(queue=self.queue, durable=True, auto_delete=False,
                               exclusive=False)

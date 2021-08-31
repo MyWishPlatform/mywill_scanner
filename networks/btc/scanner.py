@@ -15,16 +15,11 @@ class BTCScanner(Scanner):
             return
 
         address_transactions = collections.defaultdict(list)
-        print(len(block.transactions))
-        print(block.transactions)
-
+        
         for tx in block.transactions:
-            for _input in tx.inputs:
-                address_transactions[_input].append(tx)
-
             for output in tx.outputs:
-                address_transactions[output.address].append(tx)
-
-        block_event = BlockEvent(self.network, block, address_transactions)
+                for _out in output.address:
+                    address_transactions[_out].append(tx)
+        block_event = BlockEvent(self.network, block=block, transactions_by_address=address_transactions)
         pub.sendMessage(self.network.type, block_event=block_event)
 
