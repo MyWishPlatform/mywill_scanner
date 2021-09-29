@@ -10,6 +10,9 @@ class BaseMonitor:
     event_type: str
     queue: str
 
+    # @classmethod
+    # def
+
     def __init__(self, network):
         self.network_type = network
         self.queue = CONFIG['networks'][self.network_type]['queue']
