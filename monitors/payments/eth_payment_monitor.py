@@ -1,6 +1,11 @@
+import logging
+
 from base import BlockEvent, BaseMonitor
 from models import UserSiteBalance, session
 from settings import CONFIG
+
+
+LOGGER = logging.getLogger()
 
 
 class EthPaymentMonitor(BaseMonitor):
@@ -21,11 +26,14 @@ class EthPaymentMonitor(BaseMonitor):
             transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
 
             if not transactions:
+                LOGGER.info('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
+                    block_event.network.type, user_site_balance, block_event.block.number))
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
                     block_event.network.type, user_site_balance, block_event.block.number))
 
             for transaction in transactions:
                 if user_site_balance.eth_address.lower() != transaction.outputs[0].address.lower():
+                    LOGGER.info('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type))
                     print('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type),
                           flush=True)
                     continue

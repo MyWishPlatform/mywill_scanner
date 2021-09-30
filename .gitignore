@@ -133,3 +133,4 @@ settings/
 
 # LastBlockPersister blocks dir
 block_numbers
+/.tools/

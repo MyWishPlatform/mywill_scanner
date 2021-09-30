@@ -1,11 +1,21 @@
 import threading
 import time
+
+from logging import getLogger, basicConfig
+import logging
+
 from pubsub import pub
+
+logging.basicConfig(filename='last_log.log', filemode='w', level=logging.INFO)
+LOGGER = getLogger()
+LOGGER.info("starting initialization")
 
 import monitors
 from networks import scanner_makers
 from server import run_server
 from settings import CONFIG
+
+LOGGER.info("all stuff are imported successfuly")
 
 
 subscribe_list = []
@@ -38,6 +48,8 @@ class ScanEntrypoint(threading.Thread):
 
 
 if __name__ == "__main__":
+    LOGGER.info("running main...")
+
     for net_name, net_conf in CONFIG["networks"].items():
         maker_names = net_conf["scanner_makers"]
         for maker_name in maker_names:

@@ -1,5 +1,9 @@
+import logging
+
 from base import BlockEvent, BaseMonitor, Transaction
 from models import session, tokens_details, Contract, Network
+
+LOGGER = logging.getLogger()
 
 
 class EthSendingMonitor(BaseMonitor):
@@ -22,6 +26,8 @@ class EthSendingMonitor(BaseMonitor):
             details_with_whitelabel.extend(result)
 
         for details in details_with_whitelabel:
+            LOGGER.info("contract_id: ", details[0].contract_id,
+                  'white_label hash: ', details[0].white_label_hash)
             print("contract_id: ", details[0].contract_id,
                   'white_label hash: ',details[0].white_label_hash)
             transaction: Transaction = deploy_hashes[details[0].white_label_hash]

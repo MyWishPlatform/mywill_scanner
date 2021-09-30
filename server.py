@@ -30,5 +30,6 @@ async def log_networks():
 
 
 def run_server():
+    log_config = uvicorn.config.LOGGING_CONFIG
     uvicorn.run("server:app", host=CONFIG["server"]["ip"], port=CONFIG["server"]["port"], log_level="info")
 

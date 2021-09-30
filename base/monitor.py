@@ -1,8 +1,11 @@
 import json
+import logging
 
 import pika
 
 from settings import CONFIG
+
+LOGGER = logging.getLogger()
 
 
 class BaseMonitor:
@@ -44,4 +47,5 @@ class BaseMonitor:
         )
         connection.close()
 
+        LOGGER.info('{} sent message to backend: {}'.format(self.__class__.__name__, message))
         print('{} sent message to backend: {}'.format(self.__class__.__name__, message), flush=True)
