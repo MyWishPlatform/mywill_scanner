@@ -6,7 +6,6 @@ import monitors
 from networks import scanner_makers
 from server import run_server
 from settings import CONFIG
-from base.scanner import ScannerManager
 
 
 subscribe_list = []
@@ -39,8 +38,6 @@ class ScanEntrypoint(threading.Thread):
 
 
 if __name__ == "__main__":
-    scanners = []
-
     for net_name, net_conf in CONFIG["networks"].items():
         maker_names = net_conf["scanner_makers"]
         for maker_name in maker_names:
@@ -51,7 +48,6 @@ if __name__ == "__main__":
                 net_conf["polling_interval"],
                 net_conf["commitment_chain_length"],
             )
-            scanners.append(scan)
             scan.start()
 
     run_server()

@@ -69,6 +69,7 @@ pyparsing==2.4.7
 Pypubsub==4.0.3
 pyrsistent==0.17.3
 python-bitcoinrpc==1.0
+python-dotenv==0.19.0
 PyYAML==5.4.1
 requests==2.25.1
 requests-toolbelt==0.9.1
