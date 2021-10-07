@@ -1,0 +1,8 @@
+.idea
+.env
+last_log.log
+block_numbers
+venv
+tests
+readme.md
+

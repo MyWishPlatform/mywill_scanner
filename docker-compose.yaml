@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  scanner:
+    container_name: scanner
+    build:
+      context: .
+    volumes:
+      - .:/usr/app
+    ports:
+      - "127.0.0.1:8888:8888"
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      scanner-network:
+    environment:
+      - CONFIG=/usr/app/settings/confing_dev.yaml
+
+  db_2:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+
+    container_name: db_2
+    env_file: .env
+    volumes:
+      - ./.docker/postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      scanner-network:
+
+networks:
+  scanner-network:
