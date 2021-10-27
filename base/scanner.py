@@ -1,9 +1,11 @@
 import os
+import datetime
 import sys
 import time
 import traceback
 
 from base.network import Network
+from telegram_alerts import alert_bot
 
 
 class LastBlockPersister:
@@ -30,6 +32,8 @@ class LastBlockPersister:
 class Scanner:
     INFO_INTERVAL = 60000
     WARN_INTERVAL = 120000
+    last_block_time: float
+    next_block_number: int
 
     def __init__(self, network: Network, last_block_persister: LastBlockPersister, polling_interval: int,
                  commitment_chain_length: int, reach_interval: int = 0):
@@ -46,9 +50,22 @@ class Scanner:
     def poller(self):
         self.last_block_time = time.time()
         self.next_block_number = self.last_block_persister.get_last_block()
+        warning_block_seconds = 25 * 60
         print('hello from {}'.format(self.network.type), flush=True)
         while True:
             self.polling()
+
+            now = time.time()
+            diff = now - self.last_block_time
+
+            if diff >= warning_block_seconds:
+                last_block_time_dt = datetime.datetime.fromtimestamp(self.last_block_time)
+                td = datetime.timedelta(seconds=diff)
+                warn_msg = (f'Warning! Skipped too many blocks in {self.network.type}.\n' +
+                            f'Last block time {last_block_time_dt}\n' +
+                            f'Its around {round(td.seconds / 60)} minutes ' +
+                            f'and {td.days} days')
+                alert_bot.send_messages(warn_msg)
 
     def polling(self):
         try:
@@ -71,8 +88,10 @@ class Scanner:
 
             print('{}: all blocks processed, wait new one.'.format(self.network.type))
         except Exception as e:
-            print('{}: exception handled in polling cycle. Continue.'.format(self.network.type))
-            print('\n'.join(traceback.format_exception(*sys.exc_info())), flush=True)
+            error_traceback = '{}: exception handled in polling cycle. Continue.'.format(self.network.type)
+            error_traceback += '\n'.join(traceback.format_exception(*sys.exc_info()))
+            print(error_traceback, flush=True)
+            alert_bot.send_messages(error_traceback)
 
         time.sleep(self.polling_interval)
 
@@ -90,3 +109,4 @@ class Scanner:
 
     def close(self):
         pass
+

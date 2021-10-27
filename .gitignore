@@ -133,3 +133,6 @@ settings/
 
 # LastBlockPersister blocks dir
 block_numbers
+
+# Telegram alert bot storage
+telegram_alerts/tg_ids
