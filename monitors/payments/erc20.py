@@ -17,7 +17,7 @@ class ERC20PaymentMonitor(BaseMonitor):
             print('addresses:',addresses)
             if token_address in addresses:
                 transactions = block_event.transactions_by_address[token_address]
-                return self.handle(token_address, token_name, transactions, block_event.network)
+                self.handle(token_address, token_name, transactions, block_event.network)
 
     def handle(self, token_address: str, token_name, transactions, network):
         print('handle start')
