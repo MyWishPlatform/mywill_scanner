@@ -10,13 +10,22 @@ from settings import CONFIG
 Base = automap_base()
 
 
-# engine = create_engine(f"postgresql+psycopg2://lastwill_new:lastwill_new@localhost:5432/lastwill_new")
-#
-print(f"postgresql+psycopg2://lastwill_new:lastwill_new@{os.getenv('POSTGRES_HOST')}:5432/lastwill_new")
+# engine = create_engine(f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+#                        f"@"
+#                        f"127.0.0.1:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}")
+
+# print(f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+#                        f"@"
+#                        f"{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}")
 
 engine = create_engine(f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
                        f"@"
                        f"{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}")
+
+
+# engine = create_engine(f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+#                        f"@"
+#                        f"{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}")
 #
 
 Base.prepare(engine, reflect=True)
@@ -35,3 +44,5 @@ details_names = ['contractdetailsxinfintoken', 'contractdetailstoken', 'contract
 tokens_details = [getattr(Base.classes, 'contracts_' + details) for details in details_names]
 
 session = Session(engine)
+print("session created")
+

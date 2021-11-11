@@ -4,8 +4,11 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Dict
 
+print("[server] import custom")
 from base.scanner import ScannerManager
 from settings import CONFIG
+print("[server] imported")
+
 
 
 class Response(BaseModel):
@@ -17,7 +20,6 @@ app = FastAPI()
 
 @app.get('/speed/', description='')
 async def log_networks():
-    print("test")
     response = {}
     for stack in ScannerManager.stacks:
         # TODO: обернуть в try
@@ -35,8 +37,8 @@ async def log_networks():
     return {"text": "hello"}
 
 
-# HOST = CONFIG["server"]["ip"]
-HOST = "scanner"
+HOST = CONFIG["server"]["ip"]
+# HOST = "scanner"
 
 
 def run_server():

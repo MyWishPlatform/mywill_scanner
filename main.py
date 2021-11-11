@@ -10,16 +10,24 @@ logging.basicConfig(filename='last_log.log', filemode='w', level=logging.INFO)
 LOGGER = getLogger()
 LOGGER.info("starting initialization")
 
+print("[main] import monitors")
 import monitors
+print("[main] import networks")
 from networks import scanner_makers
+print("[main] import server")
 from server import run_server
+print("[main] import settings")
 from settings import CONFIG
+print("[main] import all imported")
 
-LOGGER.info("all stuff are imported successfuly")
+
+LOGGER.info("all stuff are imported successfully")
 
 
 subscribe_list = []
 for name, monitor_config in CONFIG["monitors"].items():
+    print(f"settuping monitor {name}...")
+
     monitor_class = getattr(monitors, name, None)
     if monitor_class:
         networks = monitor_config["networks"]
@@ -48,6 +56,7 @@ class ScanEntrypoint(threading.Thread):
 
 
 if __name__ == "__main__":
+    print("db already setuped")
     LOGGER.info("running main...")
 
     for net_name, net_conf in CONFIG["networks"].items():
