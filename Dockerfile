@@ -5,7 +5,7 @@ RUN pip install psycopg2-binary sqlalchemy web3 PyPubSub tronapi pika pyyaml pyt
 WORKDIR /app
 COPY . /app
 
-CMD ["python", "main.py"]
+CMD ["python", "./main.py"]
 
 EXPOSE 8888
 EXPOSE 8000
