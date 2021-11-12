@@ -138,3 +138,4 @@ settings/
 .docker/
 /.docker/
 /.docker/
+docker-compose.yaml
