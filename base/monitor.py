@@ -1,14 +1,20 @@
 import json
+import logging
 
 import pika
 
 from settings import CONFIG
+
+LOGGER = logging.getLogger()
 
 
 class BaseMonitor:
     network_type: str
     event_type: str
     queue: str
+
+    # @classmethod
+    # def
 
     def __init__(self, network):
         self.network_type = network
@@ -41,4 +47,5 @@ class BaseMonitor:
         )
         connection.close()
 
+        LOGGER.info('{} sent message to backend: {}'.format(self.__class__.__name__, message))
         print('{} sent message to backend: {}'.format(self.__class__.__name__, message), flush=True)

@@ -1,5 +1,11 @@
 from base import BlockEvent, BaseMonitor
+from logging import getLogger
+
 from models import UserSiteBalance, session
+from logging import getLogger
+
+LOGGER = getLogger()
+LOGGER.info("starting initialization")
 
 
 class TronPaymentMonitor(BaseMonitor):
@@ -13,11 +19,15 @@ class TronPaymentMonitor(BaseMonitor):
             transactions = block_event.transactions_by_address[usb.tron_address.lower()]
 
             if not transactions:
+                LOGGER.info('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
+                    block_event.network.type, usb, block_event.block.number))
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
                     block_event.network.type, usb, block_event.block.number))
 
             for tx in transactions:
                 if usb.tron_address != tx.outputs[0].address:
+                    LOGGER.info('{}: Found transaction out from internal address. Skip it.'\
+                                .format(block_event.network.type))
                     print('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type),
                           flush=True)
                     continue

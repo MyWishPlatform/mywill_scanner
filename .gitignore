@@ -82,7 +82,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+secret/.env
 .venv
 env/
 venv/
@@ -123,7 +123,6 @@ settings_local.py
 gunicorn.conf.py
 db.sqlite3
 .vscode/
-settings/
 
 
 # ignore local configs
@@ -133,3 +132,12 @@ settings/
 
 # LastBlockPersister blocks dir
 block_numbers
+/.tools/
+#settings/
+.backup_2_10_2021.sql
+.docker/
+/.docker/
+/.docker/
+docker-compose.yaml
+secret/
+#!/settings/

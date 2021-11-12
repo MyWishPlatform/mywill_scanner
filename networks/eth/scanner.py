@@ -1,17 +1,23 @@
 import collections
 from pubsub import pub
 from web3.exceptions import LogTopicError
+import logging
 
 from contracts import token_abi
 from base import Block, Scanner, BlockEvent
 
 
+LOGGER = logging.getLogger()
+
+
 class EthScanner(Scanner):
 
     def process_block(self, block: Block):
+        LOGGER.info('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash))
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
         if not block.transactions:
+            LOGGER.info('{}: no transactions in {} ({})'.format(self.network.type, block.number, block.hash))
             print('{}: no transactions in {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
             return
 

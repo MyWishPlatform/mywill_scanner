@@ -1,5 +1,10 @@
+import logging
+
 from base import BlockEvent, BaseMonitor, Transaction
 from models import ETHContract, Contract, Network, session
+
+
+LOGGER = logging.getLogger()
 
 
 class DeployMonitor(BaseMonitor):
@@ -20,6 +25,7 @@ class DeployMonitor(BaseMonitor):
             .filter(Network.name == block_event.network.type).all()
 
         for contract in eth_contracts:
+            LOGGER.info("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
             print("eth_id:", contract[0].id, "contract_id", contract[0].contract_id, contract[0].tx_hash)
             transaction: Transaction = deploy_hashes[contract[0].tx_hash]
             tx_receipt = block_event.network.get_tx_receipt(transaction.tx_hash)
