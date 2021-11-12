@@ -1,3 +1,4 @@
+import json
 import pathlib
 import os
 from dotenv import load_dotenv
@@ -16,4 +17,8 @@ def from_file(file_obj):
 
 
 if not CONFIG:
+    print("trying to load config...")
+    print(f"config path is {os.getenv('CONFIG')}")
     from_file(open(os.getenv("CONFIG")))
+    conf = json.dumps(CONFIG).replace(',', ',\n')
+    print(f"config:\n{conf}")
