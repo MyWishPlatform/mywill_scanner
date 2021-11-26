@@ -5,8 +5,15 @@ from settings import CONFIG
 
 class TransferMonitor(BaseMonitor):
     network_type = []
-    currency = None
     event_type = 'transferred'
+    currency: str
+
+    def __init__(self, network):
+        super().__init__(network)
+        currency = CONFIG['networks'][self.network_type].get('currency')
+        if not currency:
+            raise TypeError(f'currency field should be specified for {self.network_type} network.')
+        self.currency = currency
 
     def on_new_block_event(self, block_event: BlockEvent):
         print('message')
