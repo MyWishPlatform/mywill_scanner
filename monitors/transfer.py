@@ -1,9 +1,9 @@
-rom base import BlockEvent, BaseMonitor
+from base import BlockEvent, BaseMonitor
 from models import Transfer, session
 from settings import CONFIG
 
 
-class TransferMoniter(BaseMonitor):
+class TransferMonitor(BaseMonitor):
     network_type = []
     currency = None
     event_type = 'transferred'
