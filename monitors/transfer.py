@@ -40,5 +40,5 @@ class TransferMonitor(BaseMonitor):
                 'success': True,
                 'status': 'COMMITTED',
             }
-            self.send_to_backend(self.event_type, CONFIG['networks'][block_event.network.type]['queue'], message)
+            self.send_to_backend(message)
 
