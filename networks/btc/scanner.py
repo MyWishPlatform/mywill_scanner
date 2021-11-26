@@ -10,7 +10,7 @@ class BTCScanner(Scanner):
     def process_block(self, block: Block):
         print('{}: new block received {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
 
-        if not block.transactions or len(block.transactions) <= 2:
+        if not block.transactions or len(block.transactions) < 2:
             print('{}: no transactions in {} ({})'.format(self.network.type, block.number, block.hash), flush=True)
             return
 
