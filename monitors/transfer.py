@@ -1,5 +1,5 @@
 from base import BlockEvent, BaseMonitor
-from models import Transfer, session
+from models import Transfers, session
 from settings import CONFIG
 
 
