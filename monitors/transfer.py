@@ -8,10 +8,9 @@ class TransferMonitor(BaseMonitor):
     currency = None
     event_type = 'transferred'
 
-    @classmethod
-    def on_new_block_event(cls, block_event: BlockEvent):
+    def on_new_block_event(self, block_event: BlockEvent):
         print('message')
-        if block_event.network.type not in cls.network_type:
+        if block_event.network.type not in self.network_type:
             return
 
         tx_hashes = set()
@@ -21,7 +20,7 @@ class TransferMonitor(BaseMonitor):
 
         transfers = session \
             .query(Transfers) \
-            .filter(Transfers.tx_hash.in_(tx_hashes), Transfers.currency == cls.currency) \
+            .filter(Transfers.tx_hash.in_(tx_hashes), Transfers.currency == self.currency) \
             .distinct(Transfers.tx_hash) \
             .all()
         for transfer in transfers:
@@ -29,10 +28,10 @@ class TransferMonitor(BaseMonitor):
             message = {
                 'transactionHash': transfer.tx_hash,
                 'transferId': transfer.id,
-                'currency': cls.currency,
+                'currency': self.currency,
                 'amount': int(transfer.amount),
                 'success': True,
                 'status': 'COMMITTED',
             }
-            self.send_to_backend(cls.event_type, CONFIG['networks'][block_event.network.type]['queue'], message)
+            self.send_to_backend(self.event_type, CONFIG['networks'][block_event.network.type]['queue'], message)
 
