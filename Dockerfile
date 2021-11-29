@@ -16,6 +16,6 @@ COPY poetry.lock pyproject.toml /app/
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
-COPY mywill_scanner /app/
+COPY . /app
 
 CMD poetry run python main.py
