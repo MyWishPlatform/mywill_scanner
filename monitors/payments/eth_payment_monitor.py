@@ -1,4 +1,3 @@
-from sqlalchemy import or_
 from base import BlockEvent, BaseMonitor
 from models import UserSiteBalance, session
 from settings import CONFIG
@@ -14,24 +13,23 @@ class EthPaymentMonitor(BaseMonitor):
         if not currency:
             raise TypeError(f'currency field should be specified for {self.network_type} network.')
         self.currency = currency
+        self.address_field_name = '{}_address'.format(self.currency.lower())
 
     def on_new_block_event(self, block_event: BlockEvent):
         addresses = block_event.transactions_by_address.keys()
         user_site_balances = session.query(UserSiteBalance).filter(
-            or_(
-                UserSiteBalance.eth_address.in_(addresses),
-                UserSiteBalance.ducx_address.in_(addresses),
-            )
+            getattr(UserSiteBalance, self.address_field_name).in_(addresses)
         ).all()
         for user_site_balance in user_site_balances:
-            transactions = block_event.transactions_by_address[user_site_balance.eth_address.lower()]
+            address = getattr(user_site_balance, self.address_field_name)
+            transactions = block_event.transactions_by_address[address.lower()]
 
             if not transactions:
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
                     block_event.network.type, user_site_balance, block_event.block.number))
 
             for transaction in transactions:
-                if user_site_balance.eth_address.lower() != transaction.outputs[0].address.lower():
+                if address.lower() != transaction.outputs[0].address.lower():
                     print('{}: Found transaction out from internal address. Skip it.'.format(block_event.network.type),
                           flush=True)
                     continue
@@ -40,7 +38,7 @@ class EthPaymentMonitor(BaseMonitor):
 
                 message = {
                     'exchangeId': user_site_balance.id,
-                    'address' : user_site_balance.eth_address,
+                    'address' : address,
                     'transactionHash': transaction.tx_hash,
                     'currency': self.currency,
                     'amount': transaction.outputs[0].value,
