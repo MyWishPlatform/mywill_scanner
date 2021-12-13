@@ -1,4 +1,6 @@
 import collections
+import traceback
+import sys
 from pubsub import pub
 from web3.exceptions import LogTopicError
 
@@ -23,8 +25,9 @@ class EthScanner(Scanner):
         block_event = BlockEvent(self.network, block=block, events=None, transactions_by_address=address_transactions)
         try:
             pub.sendMessage(self.network.type, block_event=block_event)
-        except Exception as e:
-            print(e)
+        except Exception:
+            print('{}: exception handled while message publising. Continue.'.format(self.network.type))
+            print('\n'.join(traceback.format_exception(*sys.exc_info())), flush=True)
 
     def _check_tx_from(self, tx, addresses):
         from_address = tx.inputs[0]
