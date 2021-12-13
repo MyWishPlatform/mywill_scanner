@@ -25,7 +25,7 @@ class BaseMonitor:
 
     def send_to_backend(self, message: dict):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
-            'rabbitmq',
+            os.getenv('RABBITMQ_HOSTNAME', 'rabbitmq'),
             5672,
             os.getenv('RABBITMQ_DEFAULT_VHOST', 'rabbit'),
             pika.PlainCredentials(
