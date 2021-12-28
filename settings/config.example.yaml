@@ -17,6 +17,10 @@ networks:
     # Indicates what 'currency' will be put in the message to the backend.
     # Specific only for web3-based networks.
     currency: 'ETH'
+    # !+ for BTC and DUC networks extra key "tx_status_url" is required
+    # example for BTC:
+    tx_status_url: 'https://api.bitcore.io/api/BTC/testnet/tx/{tx_hash}/coins'
+
   ETHEREUM_ROPSTEN: # Example with eth network
     url: 'https://ropsten.infura.io/v3/<id>'
     polling_interval: 10

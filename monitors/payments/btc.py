@@ -9,30 +9,30 @@ from settings import CONFIG
 class BTCPaymentMonitor(BaseMonitor):
     event_type = 'payment'
     currency: str
+    tx_status_url: str
 
     def __init__(self, network):
         super().__init__(network)
-        currency = CONFIG['networks'][self.network_type].get('currency')
+        config = CONFIG['networks'][self.network_type]
+        currency = config.get('currency')
+        tx_status_url = config.get('tx_status_url')
         # currency = 'BTC'
         if not currency:
             raise TypeError(f'currency field should be specified for {self.network_type} network.')
         self.currency = currency
+        if not tx_status_url:
+            raise TypeError(f'tx_status_url field should be specified for {self.network_type} network.')
+        self.tx_status_url = tx_status_url
 
     def get_sent_from_address(self, tx_hash):
-        ntype = 'testnet'
-        if self.network_type.split('_')[1] == 'MAINNET':
-            ntype = 'mainnet'
-
-        tx_info_url = f'https://api.bitcore.io/api/{self.currency}/{ntype}/tx/{tx_hash}/coins'
-        res = requests.get(tx_info_url)
-        if not res.ok:
+        res = requests.get(self.tx_status_url.format(tx_hash))
+        try:
+            return res.json()['inputs'][0]['address']
+        except (KeyError, IndexError):
             return None
-        tx_info = res.json()
-        inputs = tx_info.get('inputs', None)
-        first_input = inputs[0] if inputs and len(inputs) != 0 else None
-        if not first_input or not first_input.get('address', None):
+        except Exception as err:
+            logger.debug(f'requested tx_status_info returned unknown error: {err}')
             return None
-        return first_input['address']
 
     def get_sent_to_address(self, model):
         s = self.currency.lower() + '_address'
