@@ -15,23 +15,24 @@ class BTCPaymentMonitor(BaseMonitor):
         super().__init__(network)
         config = CONFIG['networks'][self.network_type]
         currency = config.get('currency')
-        tx_status_url = config.get('tx_status_url')
+        tx_status_url = config.get('bitcore_url')
         # currency = 'BTC'
         if not currency:
             raise TypeError(f'currency field should be specified for {self.network_type} network.')
         self.currency = currency
-        if not tx_status_url:
-            raise TypeError(f'tx_status_url field should be specified for {self.network_type} network.')
-        self.tx_status_url = tx_status_url
+        if not bitcore_url:
+            raise TypeError(f'bitcore_url field should be specified for {self.network_type} network.')
+        self.bitcore_url = tx_status_url
 
     def get_sent_from_address(self, tx_hash):
-        res = requests.get(self.tx_status_url.format(tx_hash))
+        tx_status_url = self.bitcore_url + f'tx/{tx_hash}/coins'
+        res = requests.get(tx_status_url)
         try:
             return res.json()['inputs'][0]['address']
         except (KeyError, IndexError):
             return None
         except Exception as err:
-            logger.debug(f'requested tx_status_info returned unknown error: {err}')
+            logger.debug(f'requested tx_status_url returned unknown error: {err}')
             return None
 
     def get_sent_to_address(self, model):
