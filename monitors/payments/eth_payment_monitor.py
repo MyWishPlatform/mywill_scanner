@@ -38,12 +38,12 @@ class EthPaymentMonitor(BaseMonitor):
 
                 message = {
                     'exchangeId': user_site_balance.id,
-                    'address' : address,
+                    'fromAddress': transaction.inputs[0],
+                    'address': address,
                     'transactionHash': transaction.tx_hash,
                     'currency': self.currency,
                     'amount': transaction.outputs[0].value,
                     'success': tx_receipt.success,
                     'status': 'COMMITTED'
                 }
-
                 self.send_to_backend(message)

@@ -50,13 +50,6 @@ class BTCNetwork(Network):
             if o['scriptPubKey']['type'] not in self.ignore_output_types:
                 out_list.append(Output(tx['hash'], o['n'], o['scriptPubKey']['addresses'], self.interface.dec_to_int(o['value']), None))
         return out_list
-    #    return [Output(
-      #      tx['hash'],
-     #       o['n'],
-      #      o['scriptPubKey']['addresses'],
-       #     self.interface.dec_to_int(o['value']),
-       #     None
-       # ) for o in vout if o['scriptPubKey']['type'] in self.ignore_output_types]
 
 
 class APILimitError(Exception):
