@@ -9,20 +9,20 @@ from settings import CONFIG
 class BTCPaymentMonitor(BaseMonitor):
     event_type = 'payment'
     currency: str
-    tx_status_url: str
+    bitcore_url: str
 
     def __init__(self, network):
         super().__init__(network)
         config = CONFIG['networks'][self.network_type]
         currency = config.get('currency')
-        tx_status_url = config.get('bitcore_url')
+        bitcore_url = config.get('bitcore_url')
         # currency = 'BTC'
         if not currency:
             raise TypeError(f'currency field should be specified for {self.network_type} network.')
         self.currency = currency
         if not bitcore_url:
             raise TypeError(f'bitcore_url field should be specified for {self.network_type} network.')
-        self.bitcore_url = tx_status_url
+        self.bitcore_url = bitcore_url
 
     def get_sent_from_address(self, tx_hash):
         tx_status_url = self.bitcore_url + f'tx/{tx_hash}/coins'
