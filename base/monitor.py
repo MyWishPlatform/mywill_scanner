@@ -30,7 +30,7 @@ class BaseMonitor:
             os.getenv('RABBITMQ_DEFAULT_VHOST', 'rabbit'),
             pika.PlainCredentials(
                 os.getenv('RABBITMQ_DEFAULT_USER', 'rabbit'),
-                os.getenv('RABBITMQ_DEFAULT_PASSWORD', 'rabbit'),
+                os.getenv('RABBITMQ_DEFAULT_PASS', 'rabbit'),
             ),
             heartbeat=3600,
             blocked_connection_timeout=3600,
