@@ -20,31 +20,32 @@ class ERC20PaymentMonitor(BaseMonitor):
         for tx in transactions:
             if token_address.lower() != tx.outputs[0].address.lower():
                 continue
+
             processed_receipt = network.get_processed_tx_receipt(tx.tx_hash, token_name)
-            if processed_receipt:
-                try:
-                    transfer_to = processed_receipt[0].args.to
-                    tokens_amount = processed_receipt[0].args.value
-                except IndexError:
-                    print(f'Unsupportable receipt received: {processed_receipt}')
-                    print('Skipping..')
-                    continue
 
-                user_site_balance = session.query(UserSiteBalance).\
-                    filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
+            if not processed_receipt:
+                print(f'Received empty receipt: {processed_receipt}')
+                continue
 
-                if not user_site_balance:
-                    continue
+            transfer_to = processed_receipt[0].args.to
+            tokens_amount = processed_receipt[0].args.value
 
-                message = {
-                    "exchangeId": user_site_balance.id,
-                    "transactionHash": tx.tx_hash,
-                    "fromAddress": tx.inputs[0],
-                    "address": user_site_balance.eth_address,
-                    "amount": tokens_amount,
-                    "currency": token_name,
-                    "status": "COMMITTED",
-                    "success": True
+            user_site_balance = session.query(UserSiteBalance).\
+                filter(UserSiteBalance.eth_address == transfer_to.lower()).first()
+
+            if not user_site_balance:
+                continue
+
+            message = {
+                "exchangeId": user_site_balance.id,
+                "transactionHash": tx.tx_hash,
+                "fromAddress": tx.inputs[0],
+                "address": user_site_balance.eth_address,
+                "amount": tokens_amount,
+                "currency": token_name,
+                "status": "COMMITTED",
+                "success": True
                 }
-                print('self.send_to_back(message) start')
-                self.send_to_backend(message)
+
+            print('self.send_to_back(message) start')
+            self.send_to_backend(message)
