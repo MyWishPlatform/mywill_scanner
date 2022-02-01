@@ -8,7 +8,7 @@ Base = automap_base()
 engine = create_engine(CONFIG['db']['url'])
 Base.prepare(engine, reflect=True)
 
-UserSiteBalance = Base.classes.exchange_requests_exchangerequest
-Transfers = Base.classes.transfers_ducatustransfer
+DepositModel = Base.classes.deposits_deposit
+# Transfers = Base.classes.transfers_ducatustransfer
 
 session = Session(engine)

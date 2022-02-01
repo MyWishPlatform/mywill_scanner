@@ -2,7 +2,8 @@ import json
 import requests
 
 from base import BlockEvent, BaseMonitor
-from models import UserSiteBalance, session
+from models import DepositModel, session
+from models import session
 from settings import CONFIG
 
 
@@ -36,15 +37,16 @@ class BTCPaymentMonitor(BaseMonitor):
             return None
 
     def get_sent_to_address(self, model):
-        s = self.currency.lower() + '_address'
-        return getattr(model, s)
+        return getattr(model, 'hd_wallet_address')
 
     def on_new_block_event(self, block_event: BlockEvent):
         addresses = block_event.transactions_by_address.keys()
-        user_site_balances = session.query(UserSiteBalance).filter(
-            self.get_sent_to_address(UserSiteBalance).in_(addresses)).all()
-        for user_site_balance in user_site_balances:
-            address = self.get_sent_to_address(user_site_balance)
+        print(f'ADDRESSES: {addresses}')
+        matched_deposits = session.query(DepositModel).filter(
+            self.get_sent_to_address(DepositModel).in_(addresses)).all()
+        print(f"MATCHED DEPOSITS: {matched_deposits}")
+        for deposit in matched_deposits:
+            address = self.get_sent_to_address(deposit)
             transactions = block_event.transactions_by_address[address]
             if not transactions:
                 print('{}: User {} received from DB, but was not found in transaction list (block {}).'.format(
@@ -52,12 +54,13 @@ class BTCPaymentMonitor(BaseMonitor):
 
             for transaction in transactions:
                 for output in transaction.outputs:
+                    print(f"ADDRESS:{address} , OUTPUT.ADDRESS: {output.address}")
                     if address not in output.address:
                         print('{}: Found transaction out from internal address. Skip it.'
                               .format(block_event.network.type), flush=True)
                         continue
                     message = {
-                        'exchangeId': user_site_balance.id,
+                        'depositId': deposit.id,
                         'fromAddress': self.get_sent_from_address(transaction.tx_hash),
                         'address': address,
                         'transactionHash': transaction.tx_hash,
@@ -66,5 +69,5 @@ class BTCPaymentMonitor(BaseMonitor):
                         'success': True,
                         'status': 'COMMITTED'
                     }
-                self.send_to_backend(message)
+                    self.send_to_backend(message)
 

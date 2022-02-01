@@ -14,7 +14,7 @@ class BTCInterface:
     def __init__(self, type):
 
         self.settings = CONFIG['networks'][type]
-        self.decimal = DECIMALS['BTC']
+        self.decimal = DECIMALS['DUC']
         self.setup_endpoint()
         self._rpc = AuthServiceProxy
         self.check_connection()

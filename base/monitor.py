@@ -27,7 +27,7 @@ class BaseMonitor:
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             os.getenv('RABBITMQ_HOSTNAME', 'rabbitmq'),
             5672,
-            os.getenv('RABBITMQ_DEFAULT_VHOST', 'rabbit'),
+            os.getenv('RABBITMQ_DEFAULT_VHOST', '/'),
             pika.PlainCredentials(
                 os.getenv('RABBITMQ_DEFAULT_USER', 'rabbit'),
                 os.getenv('RABBITMQ_DEFAULT_PASS', 'rabbit'),
@@ -36,6 +36,7 @@ class BaseMonitor:
             blocked_connection_timeout=3600,
         ))
         channel = connection.channel()
+        print(f'SENT TO QUEUE:{self.queue}')
         channel.queue_declare(queue=self.queue, durable=True, auto_delete=False,
                               exclusive=False)
         channel.basic_publish(
